@@ -1,0 +1,60 @@
+# Builds the macOS installer on GitHub's Mac runners.
+#
+# The Mac app cannot be built from Windows or Linux: electron-builder stops with
+# "Build for macOS is supported only on macOS", because making a .app means
+# Apple's own tools (codesign, hdiutil) and a Mac filesystem that keeps the
+# framework symlinks inside Electron.app intact. So the DMG is produced here, or
+# on any Mac with `npm install && npm run dist:mac` in desktop/.
+#
+# What you get, per run, in the run's Artifacts:
+#   Piratify-1.0.0-arm64.dmg   Apple silicon
+#   Piratify-1.0.0-x64.dmg     Intel
+# Both are unsigned unless you add the secrets below, so macOS will hold the
+# first launch behind Gatekeeper: right-click the app, then Open.
+
+name: macOS installer
+
+on:
+  workflow_dispatch:
+    inputs:
+      notarize:
+        description: Sign and notarise (needs the Apple secrets)
+        type: boolean
+        default: false
+  push:
+    tags: ['v*']
+
+jobs:
+  dmg:
+    runs-on: macos-14
+    defaults:
+      run:
+        working-directory: desktop
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install the shell's build tools
+        run: npm install --no-audit --no-fund
+
+      - name: Build both Mac architectures
+        run: npm run ${{ inputs.notarize && 'dist:mac:signed' || 'dist:mac' }}
+        env:
+          # Only read when a notarised build is asked for:
+          #   MAC_CERTIFICATE            a Developer ID Application .p12, base64
+          #   MAC_CERTIFICATE_PASSWORD   its password
+          #   APPLE_ID / APPLE_APP_SPECIFIC_PASSWORD / APPLE_TEAM_ID
+          CSC_LINK: ${{ secrets.MAC_CERTIFICATE }}
+          CSC_KEY_PASSWORD: ${{ secrets.MAC_CERTIFICATE_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Piratify-macOS
+          path: desktop/dist/*.dmg
+          if-no-files-found: error

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#b78cd8" />
+<title>Wavefy · cover doctor</title>
+<style>
+  :root { color-scheme: light; }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    min-height: 100dvh;
+    padding: calc(18px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom));
+    font: 15px/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Inter, sans-serif;
+    color: #1b1522;
+    background:
+      radial-gradient(125% 60% at 50% 108%, rgba(251, 192, 147, .96) 0%, rgba(251, 192, 147, .42) 38%, rgba(251, 192, 147, 0) 76%),
+      linear-gradient(180deg, #b19dd5 0%, #d985c4 22%, #e9d2a7 48%, #eed3b7 74%, #eed4c1 100%);
+    background-attachment: fixed;
+  }
+  h1 { font-size: 1.375rem; font-weight: 600; letter-spacing: -.01em; }
+  .sub { margin-top: 2px; font-size: .8125rem; color: rgba(27,21,34,.62); }
+  .card {
+    margin-top: 14px; padding: 14px;
+    border-radius: 20px;
+    background: rgba(255,255,255,.42);
+    border: 1px solid rgba(255,255,255,.55);
+    box-shadow: 0 14px 34px rgba(74,48,100,.16), inset 0 1px 0 rgba(255,255,255,.4);
+    backdrop-filter: blur(10px) saturate(150%);
+    -webkit-backdrop-filter: blur(10px) saturate(150%);
+  }
+  .row { display: flex; align-items: flex-start; gap: 10px; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,.35); }
+  .row:last-child { border-bottom: 0; }
+  .dot { flex: 0 0 auto; width: 10px; height: 10px; margin-top: 5px; border-radius: 50%; background: rgba(27,21,34,.22); }
+  .dot.ok { background: #2fbf71; }
+  .dot.bad { background: #ff4d5e; }
+  .dot.warn { background: #ffc94d; }
+  .name { flex: 1 1 auto; font-weight: 600; font-size: .875rem; }
+  .detail { margin-top: 2px; font-size: .75rem; color: rgba(27,21,34,.66); word-break: break-word; }
+  .ms { flex: 0 0 auto; font-size: .6875rem; color: rgba(27,21,34,.5); padding-top: 2px; }
+  #verdict { margin-top: 14px; font-size: .9375rem; font-weight: 600; line-height: 1.4; }
+  .tiny { margin-top: 8px; font-size: .75rem; color: rgba(27,21,34,.66); }
+  textarea {
+    width: 100%; margin-top: 12px; min-height: 150px; padding: 12px;
+    font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: #1b1522; background: rgba(255,255,255,.6);
+    border: 1px solid rgba(255,255,255,.6); border-radius: 14px; resize: vertical;
+  }
+  .actions { display: flex; gap: 10px; margin-top: 12px; }
+  button {
+    flex: 1 1 auto; padding: 12px 14px; border-radius: 16px; cursor: pointer;
+    font: 600 .875rem/1 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif;
+    color: #1b1522; background: rgba(255,255,255,.55);
+    border: 1px solid rgba(255,255,255,.65);
+    box-shadow: 0 10px 22px rgba(74,48,100,.14);
+    backdrop-filter: blur(8px) saturate(150%);
+    -webkit-backdrop-filter: blur(8px) saturate(150%);
+  }
+  button:active { transform: scale(.98); }
+</style>
+</head>
+<body>
+  <h1>Cover doctor</h1>
+  <div class="sub">Runs on this device, on this network. Nothing here touches your PC.</div>
+
+  <div class="card" id="results"></div>
+  <div class="card">
+    <div id="verdict">Running…</div>
+    <div class="tiny" id="device"></div>
+    <textarea id="report" readonly aria-label="Full report"></textarea>
+    <div class="actions">
+      <button id="copyBtn" type="button">Copy result</button>
+      <button id="againBtn" type="button">Run again</button>
+    </div>
+  </div>
+
+<script>
+/* Wavefy cover doctor.
+   ---------------------------------------------------------------------------
+   The app's cover lookups are browser-direct, so a failure can live in three
+   very different places: the network (a captive portal, a carrier block), the
+   catalogue (rate limiting by public IP — Apple does this), or the device's
+   cache and build. Guessing between them from a desktop is what wasted a day,
+   so this page asks each source directly, from the phone, and prints one line
+   per answer that can be photographed or copied back. */
+(() => {
+  const APPLE = 'https://itunes.apple.com/search';
+  const DEEZER = 'https://api.deezer.com/search';
+  const MB = 'https://musicbrainz.org/ws/2/recording';
+  const CAA = 'https://coverartarchive.org';
+  const TEST_TITLE = 'Purple Rain';
+  const TEST_ARTIST = 'Prince';
+
+  const resultsEl = document.getElementById('results');
+  const verdictEl = document.getElementById('verdict');
+  const deviceEl = document.getElementById('device');
+  const reportEl = document.getElementById('report');
+  const lines = [];
+
+  const rows = [
+    { id: 'build', name: 'Build this device ran', detail: 'reading…' },
+    { id: 'apple', name: 'Apple search (rate limited per IP)', detail: 'waiting…' },
+    { id: 'deezer', name: 'Deezer search (JSONP)', detail: 'waiting…' },
+    { id: 'mb', name: 'MusicBrainz search', detail: 'waiting…' },
+    { id: 'caa', name: 'Cover Art Archive image', detail: 'waiting…' },
+    { id: 'img', name: 'Direct image load', detail: 'waiting…' },
+  ];
+
+  resultsEl.innerHTML = rows.map(row => `
+    <div class="row" data-row="${row.id}">
+      <span class="dot"></span>
+      <span class="name">${row.name}<span class="detail">${row.detail}</span></span>
+      <span class="ms"></span>
+    </div>`).join('');
+
+  const rowEl = id => document.querySelector(`[data-row="${id}"]`);
+  function paint(id, state, detail, ms) {
+    const el = rowEl(id);
+    if (!el) return;
+    el.querySelector('.dot').className = `dot ${state}`;
+    el.querySelector('.detail').textContent = detail;
+    el.querySelector('.ms').textContent = ms ? `${ms}ms` : '';
+    lines.push(`${id.padEnd(7)} ${state.toUpperCase().padEnd(5)} ${detail}${ms ? ` [${ms}ms]` : ''}`);
+  }
+
+  const timeout = (ms, label) => new Promise((_, reject) => setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms));
+
+  function jsonpTest(url, ms) {
+    return new Promise((resolve, reject) => {
+      const cb = `__docCb${Date.now()}`;
+      const script = document.createElement('script');
+      let done = false;
+      const finish = fn => value => {
+        if (done) return;
+        done = true;
+        clearTimeout(timer);
+        try { delete window[cb]; } catch { window[cb] = undefined; }
+        script.remove();
+        fn(value);
+      };
+      const timer = setTimeout(finish(() => reject(new Error('no callback within timeout'))), ms);
+      window[cb] = finish(resolve);
+      script.onerror = finish(() => reject(new Error('script blocked')));
+      // A JSONP reply calls back during execution, so onload without a callback
+      // means we were served something that is not JSONP (a 403 page, a captcha).
+      script.onload = () => finish(() => reject(new Error('answered without a callback (blocked page)')))();
+      script.src = `${url}${url.includes('?') ? '&' : '?'}output=jsonp&callback=${cb}`;
+      document.head.appendChild(script);
+    });
+  }
+
+  async function timed(label, fn) {
+    const started = Date.now();
+    try {
+      const value = await fn();
+      return { ok: true, value, ms: Date.now() - started };
+    } catch (err) {
+      return { ok: false, error: err && err.message ? err.message : String(err), ms: Date.now() - started };
+    }
+  }
+
+  async function run() {
+    lines.length = 0;
+    verdictEl.textContent = 'Running…';
+    rows.forEach(r => paint(r.id, '', 'waiting…', 0));
+    lines.length = 0;
+
+    // 1. Which build has this device actually been running?
+    let build = '';
+    try { build = localStorage.getItem('wavefy-build') || ''; } catch { /* private mode */ }
+    // A device that has never opened the app has no stamp at all, and one that
+    // opened an older build reports that older string — which is exactly the
+    // difference between "the fix isn't working" and "this device hasn't
+    // picked the fix up yet".
+    const expected = 'wavefy-cover-pipeline-4';
+    const older = ['wavefy-cover-pipeline-3', 'wavefy-cover-pipeline-2', 'wavefy-cover-pipeline-1'];
+    paint('build', build === expected ? 'ok' : (older.includes(build) ? 'warn' : 'bad'),
+      build === expected ? build
+        : build ? `${build} — older than ${expected}, reload the app`
+        : 'never run the app on this device', 0);
+
+    const ua = navigator.userAgent;
+    const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+    deviceEl.textContent = `${standalone ? 'installed app' : 'browser tab'} · ${location.host} · ${navigator.onLine ? 'online' : 'OFFLINE'} · ${ua.replace(/^Mozilla\/5\.0 /, '').slice(0, 70)}`;
+
+    // 2. Apple — the one source that refuses a network once its budget is spent.
+    const term = `${TEST_TITLE} ${TEST_ARTIST}`;
+    const apple = await timed('apple', async () => {
+      const res = await fetch(`${APPLE}?term=${encodeURIComponent(term)}&media=music&entity=song&limit=3`, { headers: { Accept: 'application/json' } });
+      const text = await res.text();
+      return { status: res.status, text };
+    });
+    if (!apple.ok) {
+      paint('apple', 'bad', apple.error, apple.ms);
+    } else {
+      const { status, text } = apple.value;
+      // Apple answers 429 while throttling and then a bare 403 with an empty
+      // body — both mean "this network is out of budget".
+      const throttled = status === 429 || status === 403;
+      const snippet = text.replace(/\s+/g, ' ').slice(0, 110);
+      if (throttled) paint('apple', 'warn', `throttled by Apple: ${snippet}`, apple.ms);
+      else if (status !== 200) paint('apple', 'bad', `HTTP ${status}: ${snippet}`, apple.ms);
+      else {
+        let count = 0;
+        try { count = (JSON.parse(text).results || []).length; } catch { /* not json */ }
+        paint('apple', count ? 'ok' : 'warn', count ? `${count} results` : 'HTTP 200 but no results', apple.ms);
+      }
+    }
+
+    // 3. Deezer over JSONP — no CORS involved at all.
+    const deezer = await timed('deezer', () => jsonpTest(`${DEEZER}?q=${encodeURIComponent(term)}&limit=3`, 6000));
+    if (!deezer.ok) paint('deezer', 'bad', deezer.error, deezer.ms);
+    else {
+      const count = (deezer.value && deezer.value.data) ? deezer.value.data.length : 0;
+      paint('deezer', count ? 'ok' : 'warn', count ? `${count} results` : 'reached, but no results', deezer.ms);
+    }
+
+    // 4. MusicBrainz — free and keyless, but asks for about one request a second.
+    const mb = await timed('mb', async () => {
+      const query = `recording:"${TEST_TITLE}" AND artist:"${TEST_ARTIST}"`;
+      const url = `${MB}?query=${encodeURIComponent(query)}&fmt=json&limit=3`;
+      // MusicBrainz sheds load with a 503 that clears within seconds, so a first
+      // attempt failing is not yet a verdict on this network.
+      for (let attempt = 0; attempt < 3; attempt += 1) {
+        const res = await fetch(url, { headers: { Accept: 'application/json' } });
+        if (res.ok) return res.json();
+        if (res.status !== 503 && res.status !== 429) throw new Error(`HTTP ${res.status}`);
+        await new Promise(r => setTimeout(r, attempt === 0 ? 900 : 2200));
+      }
+      throw new Error('HTTP 503 (busy, 3 attempts)');
+    });
+    let releaseId = '';
+    if (!mb.ok) paint('mb', 'bad', mb.error, mb.ms);
+    else {
+      const recordings = mb.value.recordings || [];
+      releaseId = (recordings[0] && recordings[0].releases && recordings[0].releases[0] && recordings[0].releases[0].id) || '';
+      paint('mb', recordings.length ? 'ok' : 'warn', recordings.length ? `${mb.value.count || recordings.length} matches` : 'no matches', mb.ms);
+    }
+
+    // 5. Cover Art Archive — the sleeve itself, which is what the app paints.
+    let caaUrl = '';
+    if (!releaseId) {
+      paint('caa', 'warn', 'needs a MusicBrainz match first', 0);
+    } else {
+      caaUrl = `${CAA}/release/${releaseId}/front-500`;
+      const caa = await timed('caa', async () => {
+        const res = await fetch(caaUrl);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const blob = await res.blob();
+        return { type: blob.type, size: blob.size };
+      });
+      if (!caa.ok) paint('caa', 'bad', caa.error, caa.ms);
+      else if (!caa.value.size) paint('caa', 'warn', 'empty response', caa.ms);
+      else paint('caa', 'ok', `${caa.value.size} bytes of ${caa.value.type}`, caa.ms);
+    }
+
+    // 6. Painting an image is a different path from fetching one: <img> is not
+    //    subject to CORS, which is exactly why the app can use an address even
+    //    when the download is refused.
+    if (caaUrl) {
+      const img = await timed('img', () => new Promise((resolve, reject) => {
+        const el = new Image();
+        el.onload = () => resolve({ w: el.naturalWidth, h: el.naturalHeight });
+        el.onerror = () => reject(new Error('image failed to decode'));
+        el.src = caaUrl;
+        setTimeout(() => reject(new Error('image timed out')), 12000);
+      }));
+      if (!img.ok) paint('img', 'bad', img.error, img.ms);
+      else paint('img', 'ok', `painted ${img.value.w}×${img.value.h}`, img.ms);
+    } else {
+      paint('img', 'warn', 'no image URL to try', 0);
+    }
+
+    // ---- verdict ----
+    const free = ['deezer', 'mb', 'caa'].filter(id => rowEl(id) && rowEl(id).querySelector('.dot').classList.contains('ok'));
+    const appleOk = rowEl('apple').querySelector('.dot').classList.contains('ok');
+    const appleWarn = rowEl('apple').querySelector('.dot').classList.contains('warn');
+    if (free.length >= 2) {
+      verdictEl.textContent = appleOk || appleWarn
+        ? 'Covers should resolve on this device. The free sources work, so Apple being throttled only slows the leftovers.'
+        : 'Covers should resolve on this device — the free sources carry them even with Apple unavailable.';
+    } else if (free.length === 1) {
+      verdictEl.textContent = 'Only one source answers here. Covers will load, but slowly and incompletely — this is the case worth reporting.';
+    } else if (appleOk) {
+      verdictEl.textContent = 'Apple works but the free sources do not. Covers will load until Apple rate-limits this network, then stop.';
+    } else {
+      verdictEl.textContent = 'No cover source is reachable from this device. Nothing in the app can fix this — it is the network.';
+    }
+
+    const summary = [
+      `verdict: ${verdictEl.textContent}`,
+      `build: ${build || 'none'}${standalone ? ' (installed)' : ' (tab)'}`,
+      `host: ${location.host}`,
+      `user agent: ${ua}`,
+      '',
+      ...lines,
+    ].join('\n');
+    reportEl.value = summary;
+    return summary;
+  }
+
+  document.getElementById('copyBtn').addEventListener('click', async () => {
+    const text = reportEl.value;
+    try {
+      if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(text); }
+      else { reportEl.focus(); reportEl.select(); document.execCommand('copy'); }
+      document.getElementById('copyBtn').textContent = 'Copied';
+    } catch {
+      reportEl.focus();
+      reportEl.select();
+      document.getElementById('copyBtn').textContent = 'Long-press → Copy';
+    }
+    setTimeout(() => { document.getElementById('copyBtn').textContent = 'Copy result'; }, 2200);
+  });
+  document.getElementById('againBtn').addEventListener('click', () => { run(); });
+
+  run();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,583 @@
+/* Piratify — the desktop arrangement.
+ *
+ * ============================ WHAT THIS SHEET IS ============================
+ *
+ *   Layout, not material. The app's design language — white frosted glass,
+ *   hairline edges, generous radii, soft shadows, ink and its two greys, soft
+ *   cover-tinted gradients — is decided in index.html and is not touched here.
+ *   Nothing below restyles a surface the app already draws; it decides where
+ *   things sit when the window is a desk instead of a pocket.
+ *
+ *   The desk arrangement, at 900px and up:
+ *
+ *     ┌──┬──────────────────────────────────────────────────────────┐
+ *     │⌂ │  Library  ·  186                ⌕  ⋯                     │
+ *     │⌂ │  ──────────────────────────────────────────────────────  │
+ *     │▤ │  ▢ Title            Artist                 ▸   ⋯       │
+ *     │⌕ │  ▢ Title            Artist                 ▸   ⋯       │
+ *     │  │                                                          │
+ *     │  │        ┌────────────────────────────────────┐            │
+ *     │  │        │ ▢ Title           ⏮  ▶  ⏭          │  floating  │
+ *     │  │        └────────────────────────────────────┘   glass    │
+ *     └──┴──────────────────────────────────────────────────────────┘
+ *       68px (216 on hover)                      full-width content
+ *
+ *   1. THE RAIL IS ICON-ONLY, and it widens under the pointer. A desk has a
+ *      pointer, so a name does not have to be on screen for the one item you
+ *      are about to click — it has to be there for the one you are hovering.
+ *      The labels are the app's own words; the closed state simply sets the
+ *      text to zero size, and hovering the rail brings it back. Nothing is
+ *      duplicated and nothing is re-worded. The content gives the rail its
+ *      room rather than sitting under it: a frosted panel lying across a row of
+ *      album covers shows the covers through it, which reads as a mistake
+ *      rather than as depth. A short delay on the way in keeps it from firing
+ *      at someone who was aiming past the rail.
+ *
+ *   2. THE PLAYER FLOATS. The app already has a mini-player — a 46px glass pill
+ *      with the cover, a four-bar meter, the title, play/pause, next and a
+ *      hairline progress — and it already shows itself whenever a track is
+ *      playing and the immersive sheet is closed. It was hidden on wide screens
+ *      and the app's bottom bar was shown instead. This sheet does the reverse:
+ *      the pill becomes the transport, floating just above the bottom edge, and
+ *      the bar goes. One transport, always in the same place, in the app's own
+ *      material.
+ *
+ *   3. THE PLAYER OPENS FULL SCREEN. Clicking the pill opens the app's immersive
+ *      player, which has always carried a cinematic world of its own: JS writes
+ *      `--cover-1..4` from the sleeve's dominant colours, the sleeve sits behind
+ *      everything blown up and blurred, there is film grain, and every glyph on
+ *      it is white. On a phone that world is a backdrop for a small sheet; on a
+ *      desk it is the surface. The sleeve goes on the left with everything you
+ *      can do to the track stacked under it; the lyrics take the right column,
+ *      full height, with the sung line centred and lit and its neighbours quiet.
+ *      The lyric treatment is the app's own — only its size is a desk's.
+ *
+ *   4. THE LIBRARY IS A LOG. The app renders tracks as rounded glass cards in an
+ *      `auto-fill` grid, which at 1000px tiles them two-up and truncates every
+ *      title in half a window. One full-width row with aligned columns is what
+ *      lets you scan a collection. No markup changes: `display: contents` on
+ *      `.lib-sc-info` promotes its two lines to grid items of the row, so the
+ *      card keeps its own material and only the arrangement is new.
+ *
+ *   5. HEADERS ARE TIGHT. The app's view titles are set for a phone held at
+ *      arm's length — 44px for "Your Library", 28px for the greeting — and on a
+ *      desk they are the loudest thing on a screen whose job is a list. They
+ *      come down to a single compact line, the counts that repeat something
+ *      already on screen are dropped, and the playlists become a uniform grid
+ *      with one-line names.
+ *
+ *   Every rule is inside one `min-width: 900px` query — the breakpoint the app
+ *   itself already treats as "wide" — so nothing here can reach the phone.
+ * ====================================================================
+ */
+
+@media (min-width: 900px) {
+
+  :root {
+    /* The rail's two widths. 68px holds a 20px glyph with 24px of air each
+       side; 216px is the app's own 240px minus the padding it no longer needs
+       to reserve for a wordmark it now reveals on hover. */
+    --d-rail: 68px;
+    --d-rail-open: 216px;
+    /* How far down the window the app itself starts. Zero in a browser; the
+       shell sets it to its own titlebar, because the rail is fixed to the
+       viewport and would otherwise begin underneath that strip. */
+    --d-top: 0px;
+    /* The floating pill's height. */
+    --d-pill-h: 54px;
+    /* The log's columns: fixed artwork, two text columns sharing what is left,
+       then a fixed slot per trailing control so the glyphs line up in every row. */
+    --d-cols: 34px minmax(0, 2fr) minmax(0, 1.15fr) 28px 32px 32px;
+  }
+
+  /* The rail takes its width out of the content, so opening it never covers the
+     library. */
+  #app {
+    padding-left: var(--d-rail);
+    padding-right: 0;
+    transition: padding-left .26s var(--ease-out);
+  }
+  body:has(.sidebar:hover, .sidebar:focus-within) #app { padding-left: var(--d-rail-open); }
+
+  /* One transport, in the pill. Hidden rather than deleted: the renderer keeps
+     writing to it, and the desktop layer's media keys and space bar reach the
+     transport by clicking the app's own buttons. */
+  .player-bar, #playerBar { display: none !important; }
+
+  /* The app's own wordmark is not in this rail: the shell's titlebar carries the
+     brand 40px above it, and in a browser the app's home plate does. */
+  .sidebar .logo { display: none; }
+
+  /* ============ The rail ============ */
+  .sidebar {
+    position: fixed;
+    left: 0;
+    /* The height is stated rather than left to `auto`: the app sizes this rail to
+       its own content (a column of rows), and a column of rows that stops 400px
+       down a 900px window leaves the glass ending in mid-air. `auto` with a
+       bottom offset does not stretch it — an explicit height is what makes the
+       panel run the full edge, which is what a rail is. */
+    top: var(--d-top);
+    height: calc(100dvh - var(--d-top));
+    width: var(--d-rail);
+    /* `hidden` is what clips the labels while the rail is closed, and it is why
+       the widening reads as labels appearing rather than text squashing. */
+    overflow: hidden;
+    padding: 14px 12px 12px;
+    border-radius: 0 24px 24px 0;
+    z-index: 30;
+    transition: width .26s var(--ease-out), box-shadow .26s ease;
+  }
+  .sidebar:hover, .sidebar:focus-within {
+    width: var(--d-rail-open);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, .9),
+      24px 0 48px -30px rgba(17, 17, 20, .18);
+    /* On the way in only. A rail that opens the moment the pointer crosses it
+       fires at someone who was aiming past it; the delay is the difference
+       between "it opened at me" and "I meant to open this". Closing has no
+       delay, because by then the pointer has already left. */
+    transition-delay: .12s;
+  }
+
+  /* Zero-sized type is how a bare text node is hidden: the app's markup puts the
+     labels straight into the button, so there is no element to switch off. The
+     glyphs keep their own width and height, so only the words go.
+
+     The rail itself carries 12px of padding, so a row in the app's own 14px
+     plate is 44px wide and its 20px glyph lands on the rail's centre line
+     (12 + 12 + 10 = 34). Nothing else about the row changes: the fill, the
+     radius, the hover and the active plate are all still the app's. */
+  .side-nav { padding: 0; gap: 4px; }
+  .side-btn {
+    font-size: 0;
+    padding: 12px;
+    gap: 14px;
+    white-space: nowrap;
+  }
+  .sidebar:hover .side-btn, .sidebar:focus-within .side-btn { font-size: .9375rem; }
+  .side-btn svg { flex: 0 0 auto; }
+
+  .side-section {
+    font-size: 0;
+    margin: 22px 0 0;
+    padding: 0 0 8px;
+    white-space: nowrap;
+  }
+  .sidebar:hover .side-section, .sidebar:focus-within .side-section {
+    font-size: .6875rem;
+    letter-spacing: 1.4px;
+  }
+
+  /* Playlists keep their thumbnails, which is all a collapsed rail has room
+     for; the name and the count arrive with the hover. */
+  #sidePlaylists { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior-y: contain; scrollbar-width: none; }
+  #sidePlaylists::-webkit-scrollbar { width: 0; }
+  .side-playlist {
+    font-size: 0;
+    margin: 0;
+    /* A 34px thumbnail with 5px of air either side is the same 44px column the
+       nav rows use, so the thumbnails sit on the rail's centre line too. */
+    padding: 5px;
+    gap: 11px;
+    white-space: nowrap;
+  }
+  .sidebar:hover .side-playlist, .sidebar:focus-within .side-playlist { font-size: .875rem; }
+  .side-playlist .pl-thumb { flex: 0 0 auto; }
+  .side-empty { font-size: 0; padding: 6px 5px; white-space: nowrap; }
+  .sidebar:hover .side-empty, .sidebar:focus-within .side-empty { font-size: .75rem; }
+
+  /* ============ The floating player ============
+     Fixed to the viewport rather than laid out in the footer row it lives in,
+     so it floats over the log the way the app's own pill floats over the
+     library on a phone. `left`/`right` with `margin-inline: auto` centres it
+     without a transform, which matters: the app animates the pill's transform
+     for its entrance, its exit and its drag, and a centring transform here
+     would fight all three. */
+  .mini-player {
+    display: flex !important;
+    position: fixed;
+    left: calc(var(--d-rail) + 24px);
+    right: 24px;
+    bottom: 20px;
+    margin-inline: auto;
+    width: auto;
+    max-width: 540px;
+    height: var(--d-pill-h);
+    padding: 0 8px 0 7px;
+    /* The fill and the blur are the app's and stay the app's. Its chrome plate
+       is deliberately near-opaque for legible type over a scrolling list, and
+       the refraction is written inline by liquid-glass.js — both were argued
+       for in this app, and a floating pill is not a reason to overrule them.
+       What a floating pill DOES need is its own depth, which is why only the
+       shadow moves. */
+    border-radius: 18px;
+    box-shadow:
+      var(--chrome-inner),
+      0 18px 42px -18px rgba(17, 17, 20, .34),
+      0 2px 10px -4px rgba(17, 17, 20, .14);
+    transition: opacity .24s ease, transform .38s var(--ease-out), box-shadow .2s ease;
+  }
+  .mini-player[hidden] { display: none !important; }
+  .mini-player.show { pointer-events: auto; }
+  .mini-player.show:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      var(--chrome-inner),
+      0 26px 54px -20px rgba(17, 17, 20, .38),
+      0 3px 12px -4px rgba(17, 17, 20, .16);
+  }
+  /* The line under the pill was the "up next" preview. The pill is a transport
+     here, and what is next is already written on the sheet it opens. */
+  .mini-player .mp-next { display: none; }
+  .mini-player .mp-text { flex: 1 1 auto; min-width: 0; }
+  .mini-player .mp-title, .mini-player .mp-artist { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mini-player .mp-btn { flex: 0 0 auto; }
+  .mini-player .mp-btn#mpPlay { width: 34px; height: 34px; border-radius: 999px; }
+  .mini-player .mp-btn:hover { background: var(--glass-strong); }
+  /* The hairline progress reads as a pill edge rather than a bar: the app draws
+     it flush to the bottom of the pill, which is now a floating card. */
+  .mini-player .mp-prog { left: 10px; right: 10px; bottom: 0; border-radius: 999px; }
+
+  /* ============ The expanded player ============
+     Full screen, in the app's own cinematic world. */
+  .player-overlay {
+    /* The shell's titlebar is the only handle this window has — it is what moves
+       and closes it — so the player starts below that strip rather than over it.
+       `--d-top` is the strip. */
+    inset: var(--d-top) 0 0 0;
+    display: block;
+    padding: 0;
+    /* The app's wide-screen rule traded the cover-gradient backdrop for a flat
+       scrim, and the gradient is the one thing this screen is made of: it is
+       what shows before the sleeve's blur has painted and under a track with no
+       artwork at all. Restated with the app's own variables and its own stops. */
+    background:
+      radial-gradient(120% 90% at 50% 12%,
+        var(--cover-1, #3a3a44) 0%,
+        var(--cover-2, #2a2a33) 38%,
+        var(--cover-3, #1c1c22) 75%,
+        var(--cover-4, #101014) 100%);
+    /* Nothing to come out of any more: the panel is the screen. */
+    --np-pill-lift: 0px;
+  }
+  .player-overlay.open {
+    background:
+      radial-gradient(120% 90% at 50% 12%,
+        var(--cover-1, #3a3a44) 0%,
+        var(--cover-2, #2a2a33) 38%,
+        var(--cover-3, #1c1c22) 75%,
+        var(--cover-4, #101014) 100%);
+  }
+  .player-overlay.closing { opacity: 0; }
+
+  /* The sleeve, blown up until it is only its colours — the app's own backdrop,
+     blurred further because at this size 35px reads as a picture rather than a
+     field. The renderer writes `bg-art`'s display inline, so bringing it back
+     takes an !important. */
+  .player-overlay .bg-art {
+    display: block !important;
+    left: -25%; top: -25%;
+    width: 150%; height: 150%;
+    filter: blur(72px) saturate(1.5) brightness(.5);
+    transform: scale(1.06);
+  }
+  /* One vignette, one job: white type holds on any artwork. */
+  .player-overlay::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      radial-gradient(120% 90% at 50% 45%, rgba(0, 0, 0, 0) 32%, rgba(0, 0, 0, .44) 100%),
+      linear-gradient(180deg, rgba(0, 0, 0, .34) 0%, rgba(0, 0, 0, .08) 38%, rgba(0, 0, 0, .42) 100%);
+  }
+
+  .player-overlay .player-panel {
+    display: grid;
+    /* The sleeve's column is 40% of the player and the lyrics take what is left.
+       Six rows: the grabber, the sleeve, the title, the rail, the transport, and
+       a slack row that takes whatever is over. The stack hangs off the top as one
+       piece — nothing separates the sleeve from the title under it — and the
+       lyrics, which span the five rows under the grabber, always reach the bottom
+       edge. */
+    grid-template-columns: minmax(0, 40%) minmax(0, 1fr);
+    grid-template-rows: auto auto auto auto auto minmax(0, 1fr);
+    column-gap: clamp(28px, 4vw, 88px);
+    row-gap: 0;
+    align-items: start;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    /* A size container, so the sleeve and the stack under it can be measured
+       against the room that is actually left inside the player rather than
+       against the viewport — which in the app is 40px taller than the panel. */
+    container-type: size;
+    padding: clamp(14px, 2.6vh, 30px) clamp(30px, 4.5vw, 80px) clamp(22px, 4.2vh, 48px);
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    overflow: hidden;
+  }
+  /* "Up next" is a second line of small print on a screen that has the queue's
+     own view for it. */
+  .player-overlay .np-next { display: none; }
+
+  /* The grabber. Pull-down-to-dismiss is the app's gesture and, with the panel
+     covering the screen, it is also the only way out that is not the keyboard. */
+  .player-overlay .drag-handle {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    justify-self: center;
+    width: 44px; height: 4px;
+    margin: 0 0 clamp(6px, 1.2vh, 14px);
+    background: rgba(255, 255, 255, .5);
+  }
+  .player-overlay .drag-handle:hover { background: rgba(255, 255, 255, .95); }
+
+  /* ---- The sleeve and the stack under it ----
+     The sleeve is square at every size, and its size is the smallest of three
+     things: the column it sits in, the height the player can spare once the
+     stack under it is paid for, and a ceiling for the screens where the ratio
+     stops being useful. That second term is why this is stated as a height and
+     not as `height: 100%`: in the grid a definite height wins over
+     `aspect-ratio` and quietly turns every cover into a 3% crop, and `max-height`
+     does the same from the other side.
+
+     The reserve is the stack's own budget: what the title, the two lines of the
+     rail and the transport take at their largest, plus the clamps on the grabber
+     and the three margins, which run at about a tenth of the viewport's height.
+     It mirrors rules a few lines below it, which is a thing to keep in step: a
+     fourth row in the stack means this number grows with it, or the sleeve is a
+     little too tall for the room it was given. `start` is what lines its top up
+     with the first line of the song. */
+  .player-overlay .np-art {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: start;
+    justify-self: center;
+    width: min(100%, calc(100cqh - 160px - 10vh), 720px);
+    aspect-ratio: 1;
+    /* The app's giant squircle belongs to a sleeve the size of a phone; at this
+       size the corner is a corner, and a corner scales. */
+    border-radius: clamp(12px, 1.1vw, 20px);
+    margin: 0;
+    box-shadow:
+      0 46px 90px -28px rgba(0, 0, 0, .72),
+      0 0 0 1px rgba(255, 255, 255, .07);
+  }
+  /* The stack under it is measured by the sleeve's own rule, so the title, the
+     rail and the transport line up with the artwork's edges at every size and
+     the outer two glyphs keep the sleeve's margin. */
+  .player-overlay .np-meta,
+  .player-overlay .progress,
+  .player-overlay .np-controls {
+    width: min(100%, calc(100cqh - 160px - 10vh), 720px);
+    justify-self: center;
+  }
+  .player-overlay .np-meta {
+    grid-column: 1;
+    grid-row: 3;
+    align-items: center;
+    margin: clamp(18px, 2.8vh, 30px) 0 0;
+    padding: 0;
+  }
+  .player-overlay .np-title {
+    font-size: clamp(15px, 1.05vw, 21px);
+    font-weight: var(--fw-mid);
+    letter-spacing: -.3px;
+  }
+  .player-overlay .np-artist {
+    margin-top: 4px;
+    font-size: clamp(12px, .82vw, 15px);
+    color: rgba(255, 255, 255, .7);
+  }
+  .player-overlay .heart-btn { margin-top: 0; }
+  .player-overlay .heart-btn svg {
+    width: clamp(22px, 1.6vw, 30px);
+    height: clamp(22px, 1.6vw, 30px);
+  }
+
+  /* ---- The lyric column ----
+     The full height of the panel, so the line being sung is centred in the
+     screen rather than in a slot: the lines that have gone above it, the ones
+     still coming below, the app's own mask fading both edges. Nothing here has
+     to know about the follow — the app's `applyLyricFocus` already scrolls the
+     active line under the middle, and at this height it stays there. */
+  .player-overlay .lyrics {
+    grid-column: 2;
+    /* Starting at the sleeve's own row is what lines the first line of the song
+       up with the top of the sleeve. */
+    grid-row: 2 / -1;
+    align-self: stretch;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    text-align: center;
+    font-size: clamp(17px, 1.5vw, 30px);
+    line-height: 1.45;
+    letter-spacing: -.015em;
+    /* The app's mask fades a percentage of the box, which on a full-height
+       column is a hundred pixels of nothing at each end; a fixed 56px reads the
+       same at any size. */
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 56px, #000 calc(100% - 56px), transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 56px, #000 calc(100% - 56px), transparent 100%);
+    /* The active line is scaled, and a scale is wider than the box it grew out
+       of: the padding below is what it grows into, so the longest line on screen
+       cannot be clipped by a column that now scrolls sideways. */
+    overflow-x: hidden;
+    scrollbar-width: none;
+  }
+  .player-overlay .lyrics::-webkit-scrollbar { width: 0; }
+  .player-overlay .lyrics .line { padding-left: 6%; padding-right: 6%; }
+  .player-overlay .lyrics .line.active { transform: scale(1.12); }
+  /* The palette is the app's — a dim column, quieter neighbours, a lit active
+     line. Only the hover is restated, because a phone's hover target is a
+     thumb and this one is a pointer. */
+  .player-overlay .lyrics .line[data-t]:hover { color: rgba(255, 255, 255, .82); }
+  .player-overlay .lyric-resume { margin-bottom: 16px; }
+
+  /* ---- The rail and the transport ----
+     The app's own geometry: a 26px hit area over an 8px rail, 999px caps, the
+     fill riding on `scaleX`, white glyphs. Only where they sit is new. */
+  .player-overlay .progress {
+    grid-column: 1;
+    grid-row: 4;
+    margin: clamp(12px, 1.9vh, 22px) 0 0;
+    padding: 0;
+  }
+  /* Centred under the sleeve and exactly as wide as it, so the first and last
+     glyphs keep the same margin the sleeve does. The sizes step with the window
+     too, through one clamp each. */
+  .player-overlay .np-controls {
+    grid-column: 1;
+    grid-row: 5;
+    justify-content: space-between;
+    gap: 0;
+    margin: clamp(10px, 1.7vh, 20px) 0 0;
+    padding: 0;
+  }
+  .player-overlay .np-controls .ctrl svg {
+    width: clamp(20px, 1.45vw, 30px);
+    height: clamp(20px, 1.45vw, 30px);
+  }
+  .player-overlay .np-controls .play-toggle svg {
+    width: clamp(40px, 3vw, 62px);
+    height: clamp(40px, 3vw, 62px);
+  }
+  /* ============ The library log ============ */
+  .lib-song-grid { grid-template-columns: minmax(0, 1fr); }
+  .lib-song-card {
+    display: grid;
+    grid-template-columns: var(--d-cols);
+    align-items: center;
+    gap: 0 14px;
+  }
+  .lib-sc-info { display: contents; }
+  .lib-sc-art { grid-column: 1; }
+  .lib-sc-title { grid-column: 2; }
+  .lib-sc-artist { grid-column: 3; margin-top: 0; }
+  .lib-sc-upload { grid-column: 4; }
+  .lib-sc-play { grid-column: 5; }
+  .lib-sc-menu { grid-column: 6; }
+
+  /* Playlists: one card size, one line of name. The grid is a count rather
+     than a minimum so every card is the same width at any window size, and the
+     artwork's own ratio is what makes them the same height. */
+  .lib-playlist-grid {
+    grid-template-columns: repeat(auto-fill, minmax(146px, 1fr));
+    gap: 20px 16px;
+  }
+  .lib-pl-card .lib-pl-art { border-radius: 14px; }
+  .lib-pl-card .lib-pl-name { margin-top: 8px; font-size: .8125rem; line-height: 1.3; }
+  /* The count was a second line under every name, which is exactly what makes
+     a grid of cards stop being uniform. */
+  .lib-pl-card .lib-pl-count { display: none; }
+
+  /* ============ Tight headers ============
+     The app's titles are sized for a phone at arm's length and are the loudest
+     thing on a screen whose job is a list. They come down to one compact line;
+     the icons and the hairline carry the structure instead. */
+  .lib-header {
+    align-items: center;
+    padding: 0 0 10px;
+    border-bottom: 1px solid var(--glass-border);
+    margin-bottom: 16px;
+  }
+  .lib-header-logo { display: none; }
+  .lib-header-title { font-size: .9375rem; font-weight: var(--fw-mid); letter-spacing: -.1px; }
+  .lib-header-count { font-size: .75rem; color: var(--ink-faint); }
+  .lib-header-actions { gap: 4px; }
+  .lib-icon-btn { width: 32px; height: 32px; border-radius: 10px; }
+  .lib-icon-btn:hover, .icon-btn:hover { background: var(--glass-strong); }
+
+  /* The log's artwork is 34px, so the offline pin is scaled to it — the phone's
+     15px badge on a 34px sleeve is a third of the cover. */
+  .lib-off-pin { width: 12px; height: 12px; right: 1px; bottom: 1px; }
+  .lib-sc-art .lib-off-pin svg { width: 7px; height: 7px; }
+
+  /* Content-width tabs rather than five equal fifths of a full-width track. */
+  .lib-tabs { margin-bottom: 14px; }
+  .lib-tab { flex: 0 0 auto; font-size: .8125rem; padding: 7px 14px; }
+
+  .page-title { font-size: 1.25rem; letter-spacing: -.3px; margin-bottom: 14px; }
+
+  .home-mark { width: 46px; height: 46px; border-radius: 15px; }
+  .home-mark svg { width: 26px; height: 26px; }
+  .home-greet { font-size: 1.25rem; letter-spacing: -.4px; }
+  .home-sub { margin-top: 4px; }
+  /* The greeting already states how many tracks there are, and the strip under
+     it stated the same number again with a chip for each of three more. */
+  .home-stats { display: none; }
+
+  h2.section { font-size: .8125rem; font-weight: var(--fw-mid); margin: 26px 0 10px; }
+  h2.section .count { display: none; }
+  h2.section .see-all, .section-link, .lib-section-link { font-size: .75rem; }
+
+  /* Clearance for the floating pill; the app reserves 132px here for the bar
+     it no longer shows on wide screens. */
+  .view { padding-bottom: 104px; }
+
+  /* The mic sheet used to open above the bottom bar. */
+  .mic-panel { left: calc(var(--d-rail) + 24px); right: 24px; bottom: 90px; max-width: 460px; }
+
+  /* The equaliser and the offline ledger are the app's own sheets at a desktop's
+     scale: a centred column clear of the floating pill, rather than the phone's
+     edge-to-edge strip. Centred with `left`/`right` + `margin-inline: auto` and
+     NOT with a transform, because both sheets enter on a transform — a centring
+     translate would be overwritten by the animation that is still filling
+     forwards (the same reason the pill is placed this way). */
+  .eq-sheet, .off-sheet {
+    left: 0; right: 0;
+    margin-inline: auto;
+    width: min(560px, calc(100% - 96px));
+    bottom: 96px;
+  }
+  /* A desktop has the height for ten faders at their full length, and the window
+     is not a thumb away from the bottom edge, so the sheet can be taller. */
+  .eq-bands { height: 190px; }
+  .off-list { max-height: 44vh; }
+}
+
+/* ============ A narrow desktop window ============
+   The shell's minimum is 940px, so the arrangement has to hold in the band just
+   above the breakpoint. Three aligned columns need about 700px to be worth
+   aligning; below that they would leave the title 120px and truncate almost
+   every track, which is the opposite of what a log is for. There the row folds
+   the artist under the title — the compact form of the same log. */
+@media (min-width: 900px) and (max-width: 1199px) {
+  .lib-song-card {
+    grid-template-columns: 34px minmax(0, 1fr) 28px 32px 32px;
+    min-height: 54px;
+  }
+  .lib-sc-art { grid-row: 1 / 3; }
+  .lib-sc-title { grid-column: 2; grid-row: 1; align-self: end; }
+  .lib-sc-artist { grid-column: 2; grid-row: 2; align-self: start; }
+  .lib-sc-upload { grid-column: 3; grid-row: 1 / 3; }
+  .lib-sc-play { grid-column: 4; grid-row: 1 / 3; }
+  .lib-sc-menu { grid-column: 5; grid-row: 1 / 3; }
+
+  .player-overlay .player-panel { column-gap: 30px; padding: 12px 30px 30px; }
+}

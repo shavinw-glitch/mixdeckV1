@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Wavefy — logo lab</title>
+<style>
+  /* Self-contained on purpose: this page is a decision aid, not part of the app
+     bundle, so it must render correctly even if the app is mid-refactor. The
+     palette matches the app's so the choice is judged in its real context. */
+  :root {
+    --ink: #2b2130;
+    --ink-dim: #6b5a68;
+    --ink-faint: #9c8b97;
+    --base: #f2eaec;
+    --tile-1: #ffe0ee;
+    --tile-2: #f0c4f8;
+    --tile-3: #d8c0ff;
+    --tile-4: #b8d8ff;
+    --accent: #c62b5c;
+    --tile-gradient: linear-gradient(135deg, var(--tile-1) 0%, var(--tile-2) 35%, var(--tile-3) 65%, var(--tile-4) 100%);
+    --mark-gradient: linear-gradient(135deg, #ff2d55, #ff1493 15%, #c2185b 30%, #9b59b6 45%, #7c3aed 60%, #4f46e5 75%, #0ea5e9 88%, #06b6d4);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 28px 22px 80px;
+    font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, system-ui, sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(1100px 620px at 12% -8%, rgba(255,255,255,.85), transparent 60%),
+      radial-gradient(900px 520px at 108% 22%, rgba(214,190,255,.5), transparent 62%),
+      linear-gradient(180deg, #efe4ea 0%, var(--base) 46%, #ece1e7 100%);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1 { font-size: 1.75rem; font-weight: 300; letter-spacing: -.5px; margin: 0 0 6px; }
+  .lede { color: var(--ink-dim); max-width: 62ch; margin: 0 0 8px; }
+  .hint { color: var(--ink-faint); font-size: .8125rem; margin: 0 0 30px; }
+  .cards { display: grid; gap: 22px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  .card {
+    padding: 22px; border-radius: 24px;
+    background: rgba(255,255,255,.5);
+    border: 1px solid rgba(255,255,255,.75);
+    box-shadow: 0 18px 40px -22px rgba(60,20,50,.35);
+    -webkit-backdrop-filter: blur(14px) saturate(150%);
+    backdrop-filter: blur(14px) saturate(150%);
+  }
+  .card.picked { border-color: var(--accent); box-shadow: 0 18px 44px -20px rgba(198,43,92,.5); }
+  .card h2 { font-size: 1.0625rem; font-weight: 500; margin: 0 0 2px; letter-spacing: -.2px; }
+  .card .tag { font-size: .75rem; letter-spacing: .4px; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 14px; }
+  .card p { color: var(--ink-dim); font-size: .875rem; margin: 12px 0 0; }
+  .hero-row { display: flex; align-items: center; gap: 16px; }
+  .sizes { display: flex; align-items: center; gap: 14px; margin-top: 18px; flex-wrap: wrap; }
+  .on-dark {
+    background: #2a1f2b; border-radius: 16px; padding: 10px; display: flex; align-items: center; gap: 10px;
+  }
+  label.pick {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: 16px;
+    font-size: .8125rem; color: var(--ink-dim); cursor: pointer; user-select: none;
+  }
+  label.pick input { accent-color: var(--accent); width: 16px; height: 16px; }
+
+  /* ---- tile + mark primitives, shared by all four directions ---- */
+  .tile {
+    position: relative; border-radius: 22%;
+    background: var(--tile-gradient);
+    border: 1px solid rgba(255,255,255,.78);
+    box-shadow: 0 10px 24px rgba(127,58,237,.22), inset 0 1px 0 rgba(255,255,255,.95);
+    display: grid; place-items: center; isolation: isolate; flex: 0 0 auto;
+  }
+  .tile.s120 { width: 120px; height: 120px; border-radius: 30px; }
+  .tile.s64 { width: 64px; height: 64px; border-radius: 18px; }
+  .tile.s44 { width: 44px; height: 44px; border-radius: 13px; }
+  .tile.s28 { width: 28px; height: 28px; border-radius: 9px; }
+  .tile.dark { background: linear-gradient(135deg, #3a2540, #241a2b); border-color: rgba(255,255,255,.16); box-shadow: 0 10px 24px rgba(0,0,0,.35); }
+  .glyph { width: 66%; height: 66%; }
+  .tile.s28 .glyph { width: 72%; height: 72%; }
+
+  /* ================= A — the traced mark (current) ================= */
+  .hm-ripple {
+    position: absolute; z-index: 0; left: 63%; top: 45%;
+    width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%;
+    border: 1.5px solid rgba(150,60,220,.5);
+    animation: hmRipple 3.4s cubic-bezier(.22,.7,.3,1) infinite;
+  }
+  .hm-ripple.late { animation-delay: 1.7s; }
+  @keyframes hmRipple {
+    0% { transform: scale(.3); opacity: 0; }
+    16% { opacity: .75; }
+    100% { transform: scale(3.4); opacity: 0; }
+  }
+  .tile.a .glyph { position: relative; z-index: 1; animation: breathe 5.2s cubic-bezier(.45,0,.55,1) infinite; }
+  @keyframes breathe { 0%,100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.045) rotate(-1.2deg); } }
+
+  /* ================= B — wave monogram ================= */
+  /* The stroke draws itself, then holds. A drawn line is legible at 28px where
+     a two-tone silhouette is not, and the draw is the animation. */
+  .tile.b .wave-path {
+    fill: none; stroke: url(#lwMark); stroke-width: 3.1;
+    stroke-linecap: round; stroke-linejoin: round;
+    stroke-dasharray: 128; stroke-dashoffset: 128;
+    animation: draw 3.6s cubic-bezier(.5,0,.4,1) infinite;
+  }
+  @keyframes draw {
+    0% { stroke-dashoffset: 128; }
+    42% { stroke-dashoffset: 0; }
+    78% { stroke-dashoffset: 0; }
+    100% { stroke-dashoffset: -128; }
+  }
+
+  /* ================= C — groove ring ================= */
+  /* Records turn, so this mark turns. One transform on one group, with the note
+     held still in the middle: cheap, and it reads as a record rather than a
+     spinner because the grooves are what move. */
+  .tile.c .grooves { transform-origin: 50% 50%; animation: spin 7s linear infinite; }
+  .tile.c .note { animation: breathe 4s cubic-bezier(.45,0,.55,1) infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ================= D — equaliser ================= */
+  /* Bars scale on the Y axis only — transform-only, so a phone composites this
+     without touching layout, and the tallest bar never leaves the tile. */
+  .tile.d .bar { transform-origin: 50% 100%; animation: dance 1.5s cubic-bezier(.45,0,.55,1) infinite; }
+  .tile.d .bar:nth-child(2) { animation-delay: .18s; }
+  .tile.d .bar:nth-child(3) { animation-delay: .36s; }
+  .tile.d .bar:nth-child(4) { animation-delay: .54s; }
+  @keyframes dance {
+    0%, 100% { transform: scaleY(.42); }
+    35% { transform: scaleY(1); }
+    62% { transform: scaleY(.66); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .glyph, .hm-ripple, .wave-path, .grooves, .note, .bar { animation: none !important; }
+    .wave-path { stroke-dashoffset: 0; }
+    .hm-ripple { opacity: .3; transform: scale(1.9); }
+  }
+</style>
+</head>
+<body>
+
+<h1>Wavefy — logo directions</h1>
+<p class="lede">Four marks, each shown animated at full size and then at the sizes the app actually uses — 64px on a desktop header, 44px on a phone, 28px in a list — on the light tile as well as on a dark one, because a gradient that works on cream can disappear on charcoal.</p>
+<p class="hint">Tick one and tell me, or just name the letter. The app icon PNGs get regenerated from whichever you choose.</p>
+
+<!-- Shared defs: the gradient every direction uses as its ink. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="lwMark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff2d55"/><stop offset="0.15" stop-color="#ff1493"/>
+      <stop offset="0.3" stop-color="#c2185b"/><stop offset="0.45" stop-color="#9b59b6"/>
+      <stop offset="0.6" stop-color="#7c3aed"/><stop offset="0.75" stop-color="#4f46e5"/>
+      <stop offset="0.88" stop-color="#0ea5e9"/><stop offset="1" stop-color="#06b6d4"/>
+    </linearGradient>
+    <linearGradient id="lwTile" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffe0ee"/><stop offset="0.35" stop-color="#f0c4f8"/>
+      <stop offset="0.65" stop-color="#d8c0ff"/><stop offset="1" stop-color="#b8d8ff"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<div class="cards">
+
+  <!-- ============================ A ============================ -->
+  <section class="card" data-dir="A">
+    <h2>A — Head &amp; note</h2>
+    <div class="tag">current mark, now animated</div>
+    <div class="hero-row">
+      <div class="tile s120 a">
+        <span class="hm-ripple"></span><span class="hm-ripple late"></span>
+        <svg class="glyph" viewBox="0 0 32 32"><use href="#sym-head-note"/></svg>
+      </div>
+      <div>
+        <div class="sizes">
+          <div class="tile s64 a"><span class="hm-ripple"></span><span class="hm-ripple late"></span><svg class="glyph" viewBox="0 0 32 32"><use href="#sym-head-note"/></svg></div>
+          <div class="tile s44 a"><svg class="glyph" viewBox="0 0 32 32"><use href="#sym-head-note"/></svg></div>
+          <div class="tile s28 a"><svg class="glyph" viewBox="0 0 32 32"><use href="#sym-head-note"/></svg></div>
+        </div>
+        <div class="on-dark" style="margin-top:12px">
+          <div class="tile s44 dark a"><svg class="glyph" viewBox="0 0 32 32"><use href="#sym-head-note"/></svg></div>
+          <div class="tile s28 dark a"><svg class="glyph" viewBox="0 0 32 32"><use href="#sym-head-note"/></svg></div>
+        </div>
+      </div>
+    </div>
+    <p>Your traced silhouette with the note cut out. Waves leave the note itself, the glyph breathes, and both speed up while audio plays. Strongest at large sizes; at 28px it becomes a solid blob with a hole.</p>
+    <label class="pick"><input type="checkbox" name="dir" value="A" /> Pick A</label>
+  </section>
+
+  <!-- ============================ B ============================ -->
+  <section class="card" data-dir="B">
+    <h2>B — Wave monogram</h2>
+    <div class="tag">a W drawn as one waveform</div>
+    <div class="hero-row">
+      <div class="tile s120 b">
+        <svg class="glyph" viewBox="0 0 32 32">
+          <path class="wave-path" d="M4 9.5 7.4 16l-3.4 6.5M11.6 9.5 15 16l-3.4 6.5M15 16l3.4-6.5L21.8 16l3.4-6.5M21.8 16l-3.4 6.5"/>
+        </svg>
+      </div>
+      <div>
+        <div class="sizes">
+          <div class="tile s64 b"><svg class="glyph" viewBox="0 0 32 32"><path class="wave-path" d="M4 9.5 7.4 16l-3.4 6.5M11.6 9.5 15 16l-3.4 6.5M15 16l3.4-6.5L21.8 16l3.4-6.5M21.8 16l-3.4 6.5"/></svg></div>
+          <div class="tile s44 b"><svg class="glyph" viewBox="0 0 32 32"><path class="wave-path" d="M4 9.5 7.4 16l-3.4 6.5M11.6 9.5 15 16l-3.4 6.5M15 16l3.4-6.5L21.8 16l3.4-6.5M21.8 16l-3.4 6.5"/></svg></div>
+          <div class="tile s28 b"><svg class="glyph" viewBox="0 0 32 32"><path class="wave-path" d="M4 9.5 7.4 16l-3.4 6.5M11.6 9.5 15 16l-3.4 6.5M15 16l3.4-6.5L21.8 16l3.4-6.5M21.8 16l-3.4 6.5"/></svg></div>
+        </div>
+        <div class="on-dark" style="margin-top:12px">
+          <div class="tile s44 dark b"><svg class="glyph" viewBox="0 0 32 32"><path class="wave-path" d="M4 9.5 7.4 16l-3.4 6.5M11.6 9.5 15 16l-3.4 6.5M15 16l3.4-6.5L21.8 16l3.4-6.5M21.8 16l-3.4 6.5"/></svg></div>
+          <div class="tile s28 dark b"><svg class="glyph" viewBox="0 0 32 32"><path class="wave-path" d="M4 9.5 7.4 16l-3.4 6.5M11.6 9.5 15 16l-3.4 6.5M15 16l3.4-6.5L21.8 16l3.4-6.5M21.8 16l-3.4 6.5"/></svg></div>
+        </div>
+      </div>
+    </div>
+    <p>A W built from a single continuous line, drawn and then unwound on a loop. It survives every size on this page — the stroke is what carries it, so shrinking removes detail instead of destroying the shape.</p>
+    <label class="pick"><input type="checkbox" name="dir" value="B" /> Pick B</label>
+  </section>
+
+  <!-- ============================ C ============================ -->
+  <section class="card" data-dir="C">
+    <h2>C — Groove ring</h2>
+    <div class="tag">a record turning</div>
+    <div class="hero-row">
+      <div class="tile s120 c">
+        <svg class="glyph" viewBox="0 0 32 32">
+          <g class="grooves" fill="none" stroke="url(#lwMark)" stroke-width="1.5" stroke-linecap="round">
+            <path d="M16 3.4a12.6 12.6 0 1 0 0 25.2 12.6 12.6 0 0 0 0-25.2" stroke-dasharray="70 9" opacity=".9"/>
+            <path d="M16 7.2a8.8 8.8 0 1 1 0 17.6 8.8 8.8 0 0 1 0-17.6" stroke-dasharray="45 7" opacity=".75"/>
+          </g>
+          <g class="note" fill="url(#lwMark)">
+            <ellipse cx="14.2" cy="19.6" rx="3.1" ry="2.5" transform="rotate(-18 14.2 19.6)"/>
+            <path d="M16.8 12.1v7.5h-1.9v-7.5z"/>
+            <path d="M16.8 12.1l4.9-1.5v7h-1.9v-5.2l-3 .9z"/>
+          </g>
+        </svg>
+      </div>
+      <div>
+        <div class="sizes">
+          <div class="tile s64 c"><svg class="glyph" viewBox="0 0 32 32"><g class="grooves" fill="none" stroke="url(#lwMark)" stroke-width="2" stroke-linecap="round"><path d="M16 3.4a12.6 12.6 0 1 0 0 25.2 12.6 12.6 0 0 0 0-25.2" stroke-dasharray="70 9"/></g><g class="note" fill="url(#lwMark)"><ellipse cx="14.2" cy="19.6" rx="3.1" ry="2.5" transform="rotate(-18 14.2 19.6)"/><path d="M16.8 12.1v7.5h-1.9v-7.5z"/><path d="M16.8 12.1l4.9-1.5v7h-1.9v-5.2l-3 .9z"/></g></svg></div>
+          <div class="tile s44 c"><svg class="glyph" viewBox="0 0 32 32"><g class="grooves" fill="none" stroke="url(#lwMark)" stroke-width="2.4" stroke-linecap="round"><path d="M16 3.4a12.6 12.6 0 1 0 0 25.2 12.6 12.6 0 0 0 0-25.2"/></g><g class="note" fill="url(#lwMark)"><ellipse cx="14.2" cy="19.6" rx="3.1" ry="2.5" transform="rotate(-18 14.2 19.6)"/><path d="M16.8 12.1v7.5h-1.9v-7.5z"/><path d="M16.8 12.1l4.9-1.5v7h-1.9v-5.2l-3 .9z"/></g></svg></div>
+          <div class="tile s28 c"><svg class="glyph" viewBox="0 0 32 32"><g fill="none" stroke="url(#lwMark)" stroke-width="3"><path d="M16 3.4a12.6 12.6 0 1 0 0 25.2 12.6 12.6 0 0 0 0-25.2"/></g><g fill="url(#lwMark)"><ellipse cx="14.2" cy="19.6" rx="3.6" ry="2.8" transform="rotate(-18 14.2 19.6)"/><path d="M17 11.8v7.8h-2.2v-7.8z"/></g></svg></div>
+        </div>
+        <div class="on-dark" style="margin-top:12px">
+          <div class="tile s44 dark c"><svg class="glyph" viewBox="0 0 32 32"><g class="grooves" fill="none" stroke="url(#lwMark)" stroke-width="2.4"><path d="M16 3.4a12.6 12.6 0 1 0 0 25.2 12.6 12.6 0 0 0 0-25.2"/></g><g class="note" fill="url(#lwMark)"><ellipse cx="14.2" cy="19.6" rx="3.1" ry="2.5" transform="rotate(-18 14.2 19.6)"/><path d="M16.8 12.1v7.5h-1.9v-7.5z"/></g></svg></div>
+          <div class="tile s28 dark c"><svg class="glyph" viewBox="0 0 32 32"><g fill="none" stroke="url(#lwMark)" stroke-width="3"><path d="M16 3.4a12.6 12.6 0 1 0 0 25.2 12.6 12.6 0 0 0 0-25.2"/></g><g class="note" fill="url(#lwMark)"><ellipse cx="14.2" cy="19.6" rx="3.6" ry="2.8" transform="rotate(-18 14.2 19.6)"/><path d="M17 11.8v7.8h-2.2v-7.8z"/></g></svg></div>
+        </div>
+      </div>
+    </div>
+    <p>Two dashed grooves rotating around a held note. The motion is one transform on one group with the subject still, which is both the cheapest animation here and the most literal: records turn.</p>
+    <label class="pick"><input type="checkbox" name="dir" value="C" /> Pick C</label>
+  </section>
+
+  <!-- ============================ D ============================ -->
+  <section class="card" data-dir="D">
+    <h2>D — Equaliser</h2>
+    <div class="tag">the mark <em>is</em> the animation</div>
+    <div class="hero-row">
+      <div class="tile s120 d">
+        <svg class="glyph" viewBox="0 0 32 32" fill="url(#lwMark)">
+          <rect class="bar" x="5.4"  y="6" width="3.6" height="20" rx="1.8"/>
+          <rect class="bar" x="11.4" y="4" width="3.6" height="24" rx="1.8"/>
+          <rect class="bar" x="17.4" y="9" width="3.6" height="16" rx="1.8"/>
+          <rect class="bar" x="23.4" y="7" width="3.6" height="19" rx="1.8"/>
+        </svg>
+      </div>
+      <div>
+        <div class="sizes">
+          <div class="tile s64 d"><svg class="glyph" viewBox="0 0 32 32" fill="url(#lwMark)"><rect class="bar" x="6" y="7" width="4" height="18" rx="2"/><rect class="bar" x="12.6" y="5" width="4" height="22" rx="2"/><rect class="bar" x="19.2" y="10" width="4" height="14" rx="2"/><rect class="bar" x="25" y="8" width="4" height="17" rx="2"/></svg></div>
+          <div class="tile s44 d"><svg class="glyph" viewBox="0 0 32 32" fill="url(#lwMark)"><rect class="bar" x="6" y="7" width="4.4" height="18" rx="2.2"/><rect class="bar" x="12.8" y="5" width="4.4" height="22" rx="2.2"/><rect class="bar" x="19.6" y="10" width="4.4" height="14" rx="2.2"/></svg></div>
+          <div class="tile s28 d"><svg class="glyph" viewBox="0 0 32 32" fill="url(#lwMark)"><rect class="bar" x="6.6" y="7" width="5" height="18" rx="2.5"/><rect class="bar" x="14.2" y="5" width="5" height="22" rx="2.5"/><rect class="bar" x="21.8" y="10" width="5" height="14" rx="2.5"/></svg></div>
+        </div>
+        <div class="on-dark" style="margin-top:12px">
+          <div class="tile s44 dark d"><svg class="glyph" viewBox="0 0 32 32" fill="url(#lwMark)"><rect class="bar" x="6" y="7" width="4.4" height="18" rx="2.2"/><rect class="bar" x="12.8" y="5" width="4.4" height="22" rx="2.2"/><rect class="bar" x="19.6" y="10" width="4.4" height="14" rx="2.2"/></svg></div>
+          <div class="tile s28 dark d"><svg class="glyph" viewBox="0 0 32 32" fill="url(#lwMark)"><rect class="bar" x="6.6" y="7" width="5" height="18" rx="2.5"/><rect class="bar" x="14.2" y="5" width="5" height="22" rx="2.5"/><rect class="bar" x="21.8" y="10" width="5" height="14" rx="2.5"/></svg></div>
+        </div>
+      </div>
+    </div>
+    <p>Four bars dancing on the Y axis only. It is the most obviously musical and the most legible at 28px, and because the bars scale rather than resize, the mark keeps its exact silhouette at rest — the animation is additive, not structural.</p>
+    <label class="pick"><input type="checkbox" name="dir" value="D" /> Pick D</label>
+  </section>
+
+</div>
+
+<!-- The traced silhouette for direction A, so this page needs nothing from the
+     app while you are deciding. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="sym-head-note" viewBox="0 0 32 32">
+      <path fill="url(#lwMark)" d="M14.62 3.62L16.5 3.62L19 4.38L20 5L20.62 5.88L20.75 5.62L21 6.5L20.62 7.12L22.25 8.12L23.12 9.12L24.5 11.5L24.25 12.75L24.62 13L25.25 12.62L24.5 13.38L27.25 15.25L27.25 15.75L26.5 16.88L27 18L26.12 18.88L26.88 19L27.25 19.38L26.75 20.12L27.12 21L27.12 22L25.88 22.88L22.5 23.25L21.88 24.12L21.5 26L19.75 29.25L17.12 29.88L14.38 29.88L10.12 28.75L11.38 26.5L11 26.38L11.25 25.88L10.88 25.75L10.5 26.12L9.12 25.88L7.88 24.38L7.75 24.62L7.75 23.75L7.12 23.25L6.75 23.38L6.88 23L6.25 22.25L6.12 21.38L5.75 21.38L5.88 20.75L5.12 19.5L4.75 19.5L4.88 18.88L3.88 18.25L3.12 17.12L3.25 15.38L3 15L3.25 14.88L3.12 14.38L3.62 14.25L3.25 12.75L4.12 11.38L4.75 11.25L5.75 10.25L5.75 9.88L6.75 9.5L6.62 8.38L7 7.88L7.62 7.75L10 11.25L11.38 13.88L11.88 15.5L11.88 16.62L12.5 18L13.88 19.25L15 19.62L16.88 19.5L18.38 18.62L19.5 16.75L19.62 15.5L19.12 13.88L17.62 12.38L16.38 12L14.75 11L13.25 9.5L10.5 5.75L10.88 5L11.12 5.12L11.25 4.75L11.5 4.88L12.62 4L14.62 3.75Z"/>
+    </symbol>
+  </defs>
+</svg>
+
+<script>
+  /* Tick-boxes are radio-like: one choice, remembered, so a reload does not lose
+     the decision. Nothing here talks to the app — it is a decision aid. */
+  const boxes = [...document.querySelectorAll('input[name="dir"]')];
+  const SAVE = 'wavefy.logoPick';
+  const paint = () => {
+    boxes.forEach(b => b.closest('.card').classList.toggle('picked', b.checked));
+  };
+  try {
+    const saved = localStorage.getItem(SAVE);
+    const box = boxes.find(b => b.value === saved);
+    if (box) box.checked = true;
+  } catch { /* private mode: the page still works */ }
+  paint();
+  boxes.forEach(b => b.addEventListener('change', () => {
+    boxes.forEach(o => { if (o !== b) o.checked = false; });
+    try { localStorage.setItem(SAVE, b.checked ? b.value : ''); } catch { /* ignore */ }
+    paint();
+  }));
+</script>
+</body>
+</html>

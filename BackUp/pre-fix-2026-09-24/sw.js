@@ -1,20 +1,12 @@
-/* Piratify service worker — makes the app installable and offline-capable.
-   Shell files are cached; API and media requests always go to the network.
+/* Wavefy service worker — makes the app installable and offline-capable.
+   Shell files are cached; API and media requests always go to the network. */
 
-   Song audio is NOT cached here, and that is on purpose: a cached response can
-   be replayed as a whole file but not seeked (a range request against it either
-   misses or returns the entire body), so offline audio lives in IndexedDB as a
-   Blob instead — see the offline section of piratify-core.js. This worker is
-   only responsible for the shell being there when the network is not. */
-
-/* Bump this when the shell changes — the old cache is dropped on activate. The
-   app was renamed from Wavefy, so this starts a fresh cache rather than
-   inheriting a client's old one. */
-const CACHE = 'piratify-v2';
+/* Bump this when the shell changes — the old cache is dropped on activate. */
+const CACHE = 'wavefy-v100';
 const SHELL = [
   './',
   './index.html',
-  './piratify-core.js',
+  './wavefy-core.js',
   './manifest.json',
   './icons/icon.svg',
   './vendor/music-metadata.js',
@@ -64,7 +56,7 @@ self.addEventListener('fetch', event => {
   }
 
   // Shell assets (JS, CSS, icons): network first, cache as the offline
-  // fallback. Cache-first here would serve a stale piratify-core.js forever and
+  // fallback. Cache-first here would serve a stale wavefy-core.js forever and
   // silently pin every installed client to an old build.
   event.respondWith(
     fetch(event.request)

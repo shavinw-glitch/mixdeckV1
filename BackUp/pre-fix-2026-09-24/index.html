@@ -21,17 +21,14 @@
      meta (kept in sync with the surface by updatePageBackground) is what tells
      iOS how to render the glyphs against it. -->
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Piratify" />
-<!-- iOS turns any run of digits in a title into a blue phone link unless it is
-     told not to. -->
-<meta name="format-detection" content="telephone=no" />
-<meta name="description" content="Piratify — your music, shared." />
+<meta name="apple-mobile-web-app-title" content="Wavefy" />
+<meta name="description" content="Wavefy — your music, shared." />
 <link rel="manifest" href="manifest.json" />
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
 <link rel="icon" href="icons/icon-192.png" sizes="192x192" type="image/png" />
 <!-- iOS ignores an SVG apple-touch-icon, so this one is a real PNG -->
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" sizes="180x180" />
-<title>Piratify — Music</title>
+<title>Wavefy — Music</title>
 <style>
   /* ---- Kosmik ------------------------------------------------------------
      LTR Kosmik (originally FF Kosmik), designed by Erik van Blokland for
@@ -106,9 +103,7 @@
     /* Typography: one family, one light voice. Display and body share a single
        weight; only the tiny 10-12px labels step up so they stay legible. (The
        first pass sat at 300/400, which read too faint on system UI faces.) */
-    /* One weight for display and body. There were two tokens here and both
-       resolved to 500, so six call sites were spelled differently to ask for the
-       same thing — a "thin" voice the app never had. */
+    --fw-thin: 500;
     --fw-base: 500;
     --fw-mid: 600;
     /* text */
@@ -446,7 +441,7 @@
 
   .logo {
     display: flex; align-items: center; gap: 10px;
-    font-size: 1.375rem;    font-weight: var(--fw-base); letter-spacing: -.4px;
+    font-size: 1.375rem;    font-weight: var(--fw-thin); letter-spacing: -.4px;
     padding: 0 10px 26px;
   }    .logo .mark {
     width: 38px; height: 38px;
@@ -456,7 +451,7 @@
     border: 1px solid rgba(17, 17, 20, .10);
     color: #111114;
     display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 8px 20px rgba(17, 17, 20, .16), inset 0 1px 0 rgba(255,255,255,.95);
+    box-shadow: 0 8px 24px rgba(255, 45, 85, .22), inset 0 1px 0 rgba(255,255,255,.95);
   }
   .side-nav { display: flex; flex-direction: column; gap: 6px; }
   .side-btn {
@@ -631,7 +626,7 @@
   html.standalone .topbar { padding-top: calc(env(safe-area-inset-top, 0px) + 12px); }
   html.standalone .grain { opacity: .08; }
 
-  .page-title { font-size: clamp(1.875rem, 4vw, 2.5rem);    font-weight: var(--fw-base); letter-spacing: -.8px; margin-bottom: 22px; }
+  .page-title { font-size: clamp(1.875rem, 4vw, 2.5rem);    font-weight: var(--fw-thin); letter-spacing: -.8px; margin-bottom: 22px; }
 
   /* Action sheet from the kebab button */
   .sheet[hidden] { display: none; }
@@ -761,8 +756,8 @@
   .hero-art {
     position: absolute; inset: 0;
     background:
-      radial-gradient(circle at 30% 25%, rgba(255,255,255,.55), transparent 45%),
-      linear-gradient(150deg, #dcdce4 0%, #c2c2cd 45%, #a5a5b1 100%);
+      radial-gradient(circle at 30% 25%, rgba(255,220,150,.55), transparent 45%),
+      linear-gradient(150deg, #2e7d6b 0%, #4ba58c 45%, #7ec9ae 100%);
   }
   .hero-art .hero-img {
     position: absolute; inset: 0;
@@ -797,7 +792,7 @@
     /* Sits on album art, so it stays white regardless of the app's light theme
        (otherwise it inherits the dark --ink and disappears into the cover). */
     color: #fff;
-    font-size: clamp(1.125rem, 4.8vw, 1.625rem); font-weight: var(--fw-base); line-height: 1.16;
+    font-size: clamp(1.125rem, 4.8vw, 1.625rem); font-weight: var(--fw-thin); line-height: 1.16;
     letter-spacing: -.4px;
     text-shadow: 0 1px 3px rgba(0,0,0,.6), 0 6px 20px rgba(0,0,0,.45);
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
@@ -836,7 +831,7 @@
      [hidden] { display: none }, leaving empty section headings on screen. */
   h2.section[hidden] { display: none; }
   h2.section {
-    font-size: clamp(1.1875rem, 5vw, 1.5rem);    font-weight: var(--fw-base); letter-spacing: -.4px;
+    font-size: clamp(1.1875rem, 5vw, 1.5rem);    font-weight: var(--fw-thin); letter-spacing: -.4px;
     margin: var(--sp-6) 0 var(--sp-4);
     display: flex; justify-content: space-between; align-items: baseline; gap: 10px;
   }
@@ -865,20 +860,12 @@
   .album .title { margin-top: 10px; font-size: 0.875rem; font-weight: var(--fw-base); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .album .sub { margin-top: 2px; font-size: 0.75rem; color: var(--ink-faint); }
 
-  /* Placeholder covers: one cool-grey ramp, six quiet steps.
-
-     These were six saturated Material pairs (magenta, amber, green, indigo,
-     blue) and they were the loudest thing on the page: every missing cover was
-     a coloured tile, so a library mid-load looked like a different app from the
-     one that finished loading. The surface carries no colour in this design —
-     the artwork does — so a placeholder is neutral, and the six steps stay only
-     so a grid of them is not a flat wall. */
-  .cov-1 { background: linear-gradient(140deg, #e8e8ee, #c9c9d2); }
-  .cov-2 { background: linear-gradient(140deg, #dcdce4, #b9b9c4); }
-  .cov-3 { background: linear-gradient(140deg, #d2d2db, #ababb7); }
-  .cov-4 { background: linear-gradient(140deg, #c6c6d0, #9a9aa6); }
-  .cov-5 { background: linear-gradient(140deg, #bcbcc7, #8e8e9b); }
-  .cov-6 { background: linear-gradient(140deg, #b0b0bc, #83838f); }
+  .cov-1 { background: linear-gradient(140deg, #d81b60, #880e4f); }
+  .cov-2 { background: linear-gradient(140deg, #ffb300, #e65100); }
+  .cov-3 { background: linear-gradient(140deg, #2e7d32, #1b5e20); }
+  .cov-4 { background: linear-gradient(140deg, #37474f, #0a0a0a); }
+  .cov-5 { background: linear-gradient(140deg, #4527a0, #1a237e); }
+  .cov-6 { background: linear-gradient(140deg, #0277bd, #01579b); }
 
   /* Library */
   .artists { display: flex; gap: 24px; overflow-x: auto; scrollbar-width: none; padding: 6px 2px 10px; }
@@ -949,9 +936,7 @@
      transform+opacity pulse now, which the compositor owns end to end, and the
      colour change carries the meaning. */
   .row-cloud { position: relative; }
-  /* Busy is not an error. It was the accent red, which on a button that is
-     working correctly reads as "something went wrong". */
-  .row-cloud.busy { color: var(--ink); }
+  .row-cloud.busy { color: #ef1330; }
   .row-cloud.busy::after {
     content: ''; position: absolute; inset: 0; border-radius: 50%;
     border: 2px solid currentColor; opacity: 0;
@@ -990,21 +975,20 @@
     position: relative;
     overflow: hidden;
     flex: 0 0 auto;
-    background: linear-gradient(140deg, #d2d2db, #a9a9b5);
+    background: linear-gradient(140deg, #5c1a4f, #c94f7c);
   }
   .mini-banner .mb-art svg { position: absolute; inset: 0; width: 100%; height: 100%; }
   .mini-banner .t { font-size: 0.875rem; font-weight: var(--fw-base); }
   .mini-banner .a { font-size: 0.75rem; color: var(--ink-dim); margin-top: 3px; }
   .mini-banner .eq { margin-left: auto; display: flex; gap: 3px; align-items: flex-end; height: 18px; }
-  /* Three static bars, not a bouncing equaliser: this banner is an invitation to
-     import music, and an equaliser on it animates for the whole time the prompt
-     is on screen, for a message that has nothing to do with playback. */
   .mini-banner .eq span {
-    width: 3px; background: rgba(17,17,20,.55); border-radius: 2px;
+    width: 3px; background: #ffd9c4; border-radius: 2px;
+    animation: bounce 1s infinite ease-in-out;
   }
-  .mini-banner .eq span:nth-child(1) { height: 10px; }
-  .mini-banner .eq span:nth-child(2) { height: 16px; }
-  .mini-banner .eq span:nth-child(3) { height: 12px; }
+  .mini-banner .eq span:nth-child(1) { height: 10px; animation-delay: 0s; }
+  .mini-banner .eq span:nth-child(2) { height: 16px; animation-delay: .2s; }
+  .mini-banner .eq span:nth-child(3) { height: 12px; animation-delay: .4s; }
+  @keyframes bounce { 0%,100% { transform: scaleY(.5);} 50% { transform: scaleY(1);} }
 
   /* ============ Desktop bottom player bar ============ */
   .player-bar {
@@ -1028,7 +1012,7 @@
     border-radius: 12px;
     position: relative; overflow: hidden;
     flex: 0 0 auto;
-    background: radial-gradient(90% 70% at 50% 32%, #d2d2db 0%, #b0b0bc 45%, #8d8d99 100%);
+    background: radial-gradient(90% 70% at 50% 32%, #b3272c 0%, #8e161b 45%, #641014 100%);
   }
   .pb-art svg { position: absolute; inset: 0; width: 100%; height: 100%; }
   .pb-info { width: 200px; flex: 0 0 auto; }
@@ -1039,29 +1023,35 @@
 
   .pb-center { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 0; }
   .pb-controls { display: flex; align-items: center; gap: 26px; }
-  .pb-controls svg { width: 20px; height: 20px; display: block; }
-  .pb-controls .play-toggle svg { width: 36px; height: 36px; }
-  /* `.ctrl` and `.play-toggle` are white because they live on artwork in the
-     full-screen player. The bar's surface is white, so its copy of them is ink —
-     otherwise all five transport buttons are #fff on #fff. Measured before this
-     rule, on the desktop bar: color rgb(255,255,255) on a rgb(255,255,255) plate,
-     which is why they read as faint grey ghosts rather than as controls. */
-  .pb-controls .ctrl, .pb-controls .play-toggle { color: var(--ink); opacity: 1; }
-  .pb-controls .ctrl:not(.on) { opacity: .7; }
-  /* Switching shuffle or repeat on must not darken the glyph: at 70% the off
-     state is grey ink, so snapping to `opacity: 1` on press turned the icon
-     solid black — it read as a different button rather than as a setting that
-     had come on. The dot underneath (`.ctrl.on::after`) carries the state on
-     every surface, so the bar holds its weight and only hover lifts it. */
-  .pb-controls .ctrl.on { opacity: .7; }
-  .pb-controls .ctrl:hover { opacity: 1; }
   .pb-progress {
     width: min(520px, 100%);
-    display: flex; flex-direction: column; gap: 6px;
+    position: relative;
+    height: 22px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.14);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.18);
+    overflow: hidden;
+    cursor: pointer;
   }
-  /* On white chrome the clock is ink; the rail is the shared `.track` rule. */
-  .pb-progress .t-row { font-size: 0.6875rem; color: var(--ink-dim); }
-  .pb-progress .t-total { color: var(--ink-faint); }
+  .pb-progress .fill {
+    position: absolute; left: 0; top: 0; bottom: 0; right: 0;
+    background: rgba(255,255,255,.92);
+    border-radius: 999px;
+    transform-origin: 0 50%;
+    transform: scaleX(var(--fill-p, .38));
+    /* scaleX, not width: the bar is updated from the same four-per-second tick as
+       everything else, and a width transition is a layout of the whole player bar
+       four times a second. */
+    transition: transform .3s linear;
+  }
+  .pb-progress .t-now {
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    font-size: 0.6875rem; font-weight: var(--fw-mid); color: #4a0a12;
+  }
+  .pb-progress .t-total {
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+    font-size: 0.6875rem; font-weight: var(--fw-base); color: rgba(255,255,255,.9);
+  }
 
   /* ============ Full-screen player overlay ============ */
   .player-overlay {
@@ -1079,10 +1069,10 @@
        so the backdrop is always an extension of the album colors. */
     background:
       radial-gradient(120% 90% at 50% 12%,
-        var(--cover-1, #3a3a44) 0%,
-        var(--cover-2, #2a2a33) 38%,
-        var(--cover-3, #1c1c22) 75%,
-        var(--cover-4, #101014) 100%);
+        var(--cover-1, #8d1d24) 0%,
+        var(--cover-2, #74131a) 38%,
+        var(--cover-3, #4a0b10) 75%,
+        var(--cover-4, #2a0508) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1235,12 +1225,11 @@
     .player-panel .np-artist { font-size: 0.9375rem; }
     .player-panel .heart-btn svg { width: 30px; height: 30px; }
     .player-panel .progress { grid-column: 2; grid-row: 3; margin-top: 22px; padding: 0; }
-    .player-panel .np-next { grid-column: 2; grid-row: 4; justify-content: flex-start; margin-top: 14px; }
-    .player-panel .np-controls { grid-column: 2; grid-row: 5; justify-content: center; margin-top: 24px; }
+    .player-panel .np-controls { grid-column: 2; grid-row: 4; justify-content: center; margin-top: 24px; }
     /* Lyrics read as a left-aligned block beside the art, not a centred mobile
        caption, and only the lines on screen are painted. */
     .player-panel .lyrics {
-      grid-column: 2; grid-row: 6;
+      grid-column: 2; grid-row: 5;
       align-self: stretch;
       text-align: left;
       font-size: 1.25rem;
@@ -1306,7 +1295,7 @@
     padding: 0 6px;
     flex: 0 0 auto;
   }
-  .np-title { font-size: 1.3125rem; font-weight: var(--fw-base); letter-spacing: -.2px; }
+  .np-title { font-size: 1.3125rem; font-weight: var(--fw-thin); letter-spacing: -.2px; }
   .np-artist { margin-top: 5px; color: rgba(255,255,255,.75); font-size: 0.84375rem; }
   .heart-btn { background: none; border: none; color: #fff; cursor: pointer; padding: 2px; margin-top: 2px; transition: transform .45s, color .6s; }
   .heart-btn:active { transform: scale(.82); }
@@ -1327,72 +1316,34 @@
   }
 
   .progress { margin-top: 18px; padding: 0 2px; flex: 0 0 auto; }
-  /* The bar is a rail, not a plate with the clock written inside it.
-
-     26px is the TARGET — a thumb needs one — and 8px is what the eye reads, so
-     the rail is painted by ::before and the fill rides it. The times moved out
-     from under the fill for a reason that measurement makes plain: the elapsed
-     label sat at a fixed 14px inside it, so past ~2:30 it was dark maroon on
-     white and below that it was the same maroon on whatever artwork happened to
-     be behind a 14%-white plate. A label whose contrast depends on how far into
-     the song you are is not a label. */
   .track {
     position: relative;
     height: 26px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.14);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.18);
+    overflow: hidden;
     cursor: pointer;
   }
-  .track::before {
-    content: ''; position: absolute; left: 0; right: 0; top: 9px; height: 8px;
-    border-radius: 999px;
-    background: rgba(255,255,255,.22);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.18);
-  }
   .track .fill {
-    position: absolute; left: 0; right: 0; top: 9px; height: 8px;
+    position: absolute; left: 0; top: 0; bottom: 0; right: 0;
     border-radius: 999px;
-    background: #fff;
+    background: rgba(255,255,255,.92);
     transform-origin: 0 50%;
     transform: scaleX(var(--fill-p, .38));
-    /* scaleX, not width: the bar ticks several times a second, and a width
-       transition is a layout of the whole player every time. */
     transition: transform .3s linear;
   }
-  .t-row {
-    display: flex; align-items: baseline; justify-content: space-between;
-    font-variant-numeric: tabular-nums;
-  }
-  .progress .t-row { margin-top: 7px; color: rgba(255,255,255,.92); }
-  .progress .t-now { font-size: 0.75rem; font-weight: var(--fw-mid); }
-  .progress .t-total { font-size: 0.75rem; font-weight: var(--fw-base); color: rgba(255,255,255,.66); }
+  .track .t-now { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 0.75rem; font-weight: var(--fw-mid); color: #4a0a12; }
+  .track .t-total { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 0.75rem; font-weight: var(--fw-base); color: rgba(255,255,255,.95); }
 
   .np-controls {
     margin-top: 24px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 26px;
+    justify-content: space-between;
     padding: 0 14px;
     flex: 0 0 auto;
   }
-  /* The transport is generated (see TRANSPORT) and its SVGs carry no size, so
-     each player scales its own copy — which is the only thing that ever
-     differed between the two, and it is now one line each. */
-  .np-controls svg { width: 27px; height: 27px; display: block; }
-  .np-controls .play-toggle svg { width: 56px; height: 56px; }
-
-  /* What plays after this one. Dim label, then the track in full-strength white
-     — no separator punctuation, because the two lines are already two different
-     weights of one sentence. */
-  .np-next {
-    margin-top: 16px;
-    display: flex; align-items: baseline; gap: 7px;
-    font-size: 0.8125rem;
-    min-width: 0;
-  }
-  .np-next[hidden] { display: none; }
-  .np-next-k { flex: 0 0 auto; font-size: 0.6875rem; font-weight: var(--fw-mid); color: rgba(255,255,255,.62); }
-  .np-next-t { color: #fff; font-weight: var(--fw-mid); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .np-next-a { color: rgba(255,255,255,.66); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .ctrl {
     position: relative;
     background: none; border: none; color: #fff;
@@ -1403,21 +1354,12 @@
   }
   .ctrl:hover { opacity: 1; }
   .ctrl:active { transform: scale(.85); }
-  /* Shuffle and repeat carry a real ON state: the small dot underneath that iOS
-     uses, so the setting is legible with no label. There was no `.on` rule at
-     all before — the buttons toggled a class that styled nothing, which is
-     exactly why they felt dead.
-
-     The DOT carries the state, not a colour change. The transport lives on two
-     surfaces — artwork in the sheet, white in the desktop bar — and one fixed
-     colour can only ever be right on one of them. It was ink, so switching
-     shuffle or repeat on turned the glyph black and near-invisible over a dark
-     cover. The glyph now keeps whatever ink its own surface gives it (white in
-     the sheet, ink in the bar — see `.pb-controls`) and the dot says the rest. */
-  .ctrl.on { opacity: 1; }
-  /* A halo, only where the glyph is white on artwork: on the bar's white plate
-     this would be a white glow on white, which is nothing. */
-  .np-controls .ctrl.on svg { filter: drop-shadow(0 0 7px rgba(255,255,255,.45)); }
+  /* Shuffle and repeat carry a real ON state: the accent tint plus the small
+     dot underneath that iOS uses, so the setting is legible with no label.
+     There was no `.on` rule at all before — the buttons toggled a class that
+     styled nothing, which is exactly why they felt dead. */
+  .ctrl.on { color: #111114; opacity: 1; }
+  .ctrl.on svg { filter: drop-shadow(0 0 7px rgba(17,17,20,.5)); }
   .ctrl.on::after {
     content: '';
     position: absolute;
@@ -1616,12 +1558,30 @@
   .side-nav .side-btn:nth-child(4) { animation-delay: .16s; }
   .side-btn:hover, .side-playlist:hover { transform: translateX(3px); }
   /* logo gently breathes */
+  @keyframes logoFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-2px) rotate(-4deg); }
+  }
+  .logo .mark { animation: logoFloat 5s ease-in-out infinite; }
   /* glass shine sweeping the player chip */
   /* The sheen on the hero's play chip used to be an ANIMATED `background-position`
      — an infinite, full-rate repaint of the chip for a decoration, which is the
      most expensive kind of loop because it never touches the compositor. It is a
      translated highlight layer now: same sweep, painted once. */
   .play-chip { position: relative; overflow: hidden; }
+  .play-chip::after {
+    content: ''; position: absolute; top: 0; bottom: 0; left: -60%; width: 60%;
+    background: linear-gradient(100deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.34) 50%, rgba(255,255,255,0) 100%);
+    pointer-events: none;
+    animation: chipSheen 4.5s linear infinite;
+  }
+  /* Kept as the layer's own travel; anything that reads `chipSheen` still works. */
+  @keyframes chipSheen {
+    0%        { transform: translateX(0); opacity: 0; }
+    12%       { opacity: 1; }
+    55%       { transform: translateX(270%); opacity: 1; }
+    62%, 100% { transform: translateX(270%); opacity: 0; }
+  }
 
   /* ============ Library actions ============ */
   .lib-actions { flex-wrap: wrap; }
@@ -1631,7 +1591,7 @@
     color: var(--ink);
     box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 8px 20px rgba(17,17,20,.09);
   }
-  .import-btn.ghost.active { color: var(--ink); }
+  .import-btn.ghost.active { color: #ef1330; }
   .import-btn.unavailable { opacity: .5; }
 
   /* ============ Library Redesign ============ */
@@ -1733,7 +1693,7 @@
   .lib-song-card.playing { background: var(--glass-strong); box-shadow: inset 0 0 0 1px rgba(17,17,20,.10); }
   /* Every cover tile carries a soft placeholder, so one appears while the
      artwork streams in — and stays if the image never arrives. */
-  .lib-sc-art, .lib-cs-art, .lib-ca-art, .lib-al-art, .lib-cir-photo, .lib-cpl-art, .lib-art-photo, .lib-pds-art, .pl-thumb, .hero-art, .np-art .art {
+  .lib-sc-art, .lib-cs-art, .lib-ca-art, .lib-al-art, .lib-cir-photo, .lib-cpl-art, .lib-art-photo, .lib-pds-art, .pl-cover, .pl-thumb, .hero-art, .np-art .art {
     background: linear-gradient(140deg, rgba(255,255,255,.55), rgba(255,255,255,.18));
   }
   img.cover-failed { visibility: hidden; }
@@ -2172,8 +2132,8 @@
     width: 38px; height: 38px; flex: 0 0 38px;
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    background: rgba(17, 17, 20, .06);
-    color: var(--ink);
+    background: rgba(239, 19, 48, .1);
+    color: #ef1330;
   }
   /* the ring only breathes while the mic is genuinely open */
   .mic-panel.listening .mic-pulse::after {
@@ -2195,8 +2155,7 @@
     color: var(--ink-dim);
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-  .mic-close { position: relative; background: none; border: none; color: var(--ink-dim); cursor: pointer; padding: 6px; transition: transform .15s; }
-  .mic-close::before { content: ''; position: absolute; inset: -9px; border-radius: 50%; }
+  .mic-close { background: none; border: none; color: var(--ink-dim); cursor: pointer; padding: 6px; transition: transform .15s; }
   .mic-close:active { transform: scale(.85); }
   .mic-result { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
   .mic-result[hidden] { display: none; }
@@ -2229,19 +2188,82 @@
   /* the panel owns the bottom slot while it is open, so the mini player steps
      aside rather than stacking on top of it */
   body.mic-open .mini-player { display: none; }
-  /* Ink, not the old red: this was the last surface still wearing the removed
-     accent, so the primary action in the mic panel looked like it belonged to a
-     different app. */
   .mic-btn.primary {
-    background: linear-gradient(160deg, #3a3a44, #111114);
+    background: linear-gradient(160deg, #ff5f77, #ef1330);
     border-color: transparent;
     color: #fff;
-    box-shadow: 0 8px 20px rgba(17, 17, 20, .26);
+    box-shadow: 0 8px 20px rgba(239, 19, 48, .26);
   }
 
   /* ============ Playlists ============
      Cards are the library's own glass language, and the picker is one more
      sheet of it — so adding a song feels like the rest of the app. */
+  .pl-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(138px, 100%), 1fr));
+    gap: 14px;
+    max-width: 760px;
+  }
+  .pl-card {
+    position: relative;
+    display: flex; flex-direction: column;
+    padding: 10px;
+    border-radius: 22px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    -webkit-backdrop-filter: blur(2.2px) saturate(170%);
+    backdrop-filter: blur(2.2px) saturate(170%);
+    -webkit-backdrop-filter: blur(2.2px) saturate(170%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.85), 0 10px 26px rgba(17,17,20,.11);
+    cursor: pointer;
+    transition: transform .18s ease, background .2s;
+  }
+  .pl-card:hover { background: var(--glass-strong); }
+  .pl-card:active { transform: scale(.97); }
+  .pl-card .pl-cover {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border-radius: 16px;
+    overflow: hidden;
+    display: grid; place-items: center;
+    background: linear-gradient(150deg, rgba(255,255,255,.52), rgba(255,255,255,.18));
+    margin-bottom: 9px;
+  }
+  .pl-card .pl-cover svg { width: 100%; height: 100%; }
+  .pl-card .pl-cover .art-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .pl-card .pl-name { font-size: 0.875rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pl-card .pl-sub { font-size: 0.6875rem; color: var(--ink-dim); margin-top: 2px; }
+  .pl-card .pl-del {
+    position: absolute; top: 8px; right: 8px;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--glass-border);
+    background: rgba(255,255,255,.62);
+    -webkit-backdrop-filter: blur(2.2px) saturate(170%);
+    backdrop-filter: blur(2.2px) saturate(170%);
+    -webkit-backdrop-filter: blur(2.2px) saturate(170%);
+    color: var(--ink-dim);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity .2s, transform .15s;
+  }
+  .pl-card:hover .pl-del { opacity: 1; }
+  .pl-card .pl-del:active { transform: scale(.88); }
+  /* touch: there is no hover to reveal it, so it is always there */
+  @media (hover: none) { .pl-card .pl-del { opacity: 1; } }
+  .pl-card.pl-new-card {
+    align-items: center; justify-content: center; text-align: center; gap: 8px;
+    border-style: dashed;
+    color: var(--ink-dim);
+  }
+  .pl-card.pl-new-card .pl-plus {
+    width: 44px; height: 44px; border-radius: 50%;
+    display: grid; place-items: center;
+    background: var(--glass-strong);
+    border: 1px solid var(--glass-border);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
+  }
   .pl-empty { font-size: 0.8125rem; color: var(--ink-faint); line-height: 1.5; padding: 2px 2px 4px; }
 
   .pl-sheet[hidden] { display: none; }
@@ -2319,188 +2341,6 @@
     transition: transform .15s, background .2s;
   }
   .pl-create:active { transform: scale(.96); }
-
-  /* ============ Equaliser ============
-     A graphic equaliser is a shape, so the panel is one: ten faders on a shared
-     zero line, the fill growing up from the middle for a boost and down for a
-     cut, so the curve is legible before you read a single number. */
-  .eq-sheet[hidden], .off-sheet[hidden] { display: none; }
-  .eq-sheet, .off-sheet {
-    position: fixed;
-    left: 10px; right: 10px;
-    bottom: calc(92px + var(--safe-bottom, env(safe-area-inset-bottom, 0px)));
-    z-index: 46;
-    display: flex; flex-direction: column; gap: 12px;
-    padding: 14px;
-    /* The panel treatment below supplies the plate, the rim and the shadow; this
-       sheet only says how much of it to read through. */
-    --lg-tint: rgba(var(--chrome), .74);
-    animation: plIn .3s cubic-bezier(.22,1,.36,1) both;
-    max-height: min(72vh, 580px);
-  }
-  .eq-head, .off-head { display: flex; align-items: center; gap: 10px; }
-  .eq-head-txt, .off-head-txt { flex: 1; min-width: 0; }
-  .eq-title, .off-title { font-size: 0.9375rem; }
-  .eq-sub, .off-sub {
-    margin-top: 2px;
-    font-size: 0.75rem;
-    color: var(--ink-dim);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .eq-close, .off-close { background: none; border: none; color: var(--ink-dim); padding: 6px; cursor: pointer; transition: transform .15s; }
-  .eq-close:active, .off-close:active { transform: scale(.85); }
-
-  /* The switch is named, not just a knob: a bare toggle in a panel that has
-     never been opened reads as decoration. */
-  .eq-switch {
-    flex: 0 0 auto;
-    display: inline-flex; align-items: center; gap: 7px;
-    padding: 5px 11px 5px 5px;
-    border-radius: 999px;
-    border: 1px solid var(--glass-border);
-    background: rgba(255,255,255,.5);
-    color: var(--ink-dim);
-    font-family: inherit; font-size: 0.6875rem; letter-spacing: .2px;
-    cursor: pointer;
-    transition: background .24s, color .24s, border-color .24s;
-  }
-  .eq-switch-knob {
-    width: 16px; height: 16px; border-radius: 50%;
-    background: rgba(17, 17, 20, .22);
-    transition: background .24s, transform .24s var(--ease-out);
-  }
-  .eq-switch[aria-checked="true"] {
-    background: linear-gradient(160deg, #3a3a44, #111114);
-    border-color: transparent;
-    color: #fff;
-  }
-  .eq-switch[aria-checked="true"] .eq-switch-knob { background: #fff; transform: scale(1.06); }
-
-  .eq-presets { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding: 1px 0 2px; }
-  .eq-presets::-webkit-scrollbar { display: none; }
-  .eq-preset {
-    flex: 0 0 auto;
-    padding: 6px 12px;
-    border-radius: 999px;
-    border: 1px solid var(--glass-border);
-    background: rgba(255,255,255,.42);
-    color: var(--ink-dim);
-    font-family: inherit; font-size: 0.75rem; text-transform: capitalize;
-    cursor: pointer;
-    transition: background .2s, color .2s, transform .15s;
-  }
-  .eq-preset:active { transform: scale(.96); }
-  .eq-preset.active { background: linear-gradient(160deg, #3a3a44, #111114); color: #fff; border-color: transparent; }
-
-  .eq-bands { display: flex; align-items: stretch; gap: 3px; height: 170px; }
-  .eq-band { display: flex; flex-direction: column; align-items: center; gap: 5px; flex: 1 1 0; min-width: 0; }
-  .eq-db, .eq-hz { font-size: 0.625rem; color: var(--ink-faint); font-variant-numeric: tabular-nums; }
-  .eq-db.zero { color: rgba(17, 17, 20, .28); }
-
-  /* One fader, two axes: the ten bands stand it up, the preamp lays it down. */
-  .eq-fader {
-    flex: 1 1 auto;
-    display: flex; justify-content: center; align-items: stretch;
-    padding: 0; margin: 0;
-    border: none; background: none;
-    cursor: ns-resize;
-    touch-action: none;
-    border-radius: 8px;
-  }
-  .eq-fader-x { align-items: center; cursor: ew-resize; }
-  .eq-rail { position: relative; display: block; width: 6px; height: 100%; border-radius: 999px; background: rgba(17, 17, 20, .085); }
-  .eq-fader-x .eq-rail { width: 100%; height: 4px; }
-  .eq-fill {
-    position: absolute; left: 0; right: 0;
-    border-radius: 999px;
-    background: linear-gradient(180deg, #46464f, #111114);
-    /* 180ms so a preset lands as a curve rather than a snap. */
-    transition: top .18s var(--ease-out), height .18s var(--ease-out), left .18s var(--ease-out), width .18s var(--ease-out);
-  }
-  .eq-fader-x .eq-fill { top: 0; bottom: 0; height: auto; background: linear-gradient(90deg, #46464f, #111114); }
-  .eq-knob {
-    position: absolute; left: 50%; width: 20px; height: 20px; margin-left: -10px; margin-top: -10px;
-    border-radius: 50%;
-    border: 1px solid rgba(17, 17, 20, .10);
-    background: linear-gradient(180deg, #fff, #e8e8ee);
-    box-shadow: 0 1px 2px rgba(17,17,20,.20), 0 8px 16px -8px rgba(17,17,20,.42), inset 0 1px 0 #fff;
-    transition: top .18s var(--ease-out), left .18s var(--ease-out);
-  }
-  .eq-fader-x .eq-knob { top: 50%; }
-  .eq-fader:focus-visible { outline: none; }
-  .eq-fader:focus-visible .eq-knob { box-shadow: 0 0 0 3px rgba(17, 17, 20, .16), 0 1px 2px rgba(17,17,20,.20); }
-  .eq-sheet.dragging .eq-fill, .eq-sheet.dragging .eq-knob { transition: none; }
-
-  .eq-foot { display: flex; align-items: center; gap: 10px; }
-  .eq-foot-k { flex: 0 0 auto; font-size: 0.6875rem; color: var(--ink-faint); }
-  .eq-foot-v { flex: 0 0 34px; text-align: right; font-size: 0.6875rem; color: var(--ink-faint); font-variant-numeric: tabular-nums; }
-  .eq-note {
-    font-size: 0.6875rem; line-height: 1.5; color: var(--ink-faint);
-    /* Only ever written when there is something to say. */
-  }
-  .eq-note:empty { display: none; }
-  /* Off, the faders are the shape you had rather than controls you can move —
-     the same thing the switch says out loud. The presets stay live, because
-     choosing one is a way back in. */
-  .eq-sheet.off .eq-bands, .eq-sheet.off .eq-foot { opacity: .45; pointer-events: none; }
-  .eq-sheet.off .eq-presets { opacity: .62; }
-
-  /* ============ Offline music ============ */
-  .off-track { height: 4px; border-radius: 999px; background: rgba(17, 17, 20, .10); overflow: hidden; }
-  .off-track[hidden] { display: none; }
-  .off-fill {
-    display: block; width: 0; height: 100%;
-    border-radius: 999px;
-    background: linear-gradient(90deg, #46464f, #111114);
-    transition: width .2s linear;
-  }
-  .off-list {
-    display: flex; flex-direction: column; gap: 4px;
-    overflow-y: auto; overscroll-behavior-y: contain; scrollbar-width: none;
-    max-height: 36vh;
-  }
-  .off-list::-webkit-scrollbar { display: none; }
-  .off-empty { font-size: 0.8125rem; line-height: 1.55; color: var(--ink-faint); padding: 2px 2px 4px; }
-  .off-row { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 14px; background: rgba(255,255,255,.42); }
-  .off-row-art { width: 34px; height: 34px; flex: 0 0 34px; border-radius: 9px; overflow: hidden; background: var(--glass); }
-  .off-row-art img, .off-row-art svg { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .off-row-txt { flex: 1; min-width: 0; }
-  .off-row-title { font-size: 0.8125rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .off-row-sub { margin-top: 1px; font-size: 0.6875rem; color: var(--ink-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .off-row-x { flex: 0 0 auto; width: 28px; height: 28px; border-radius: 50%; border: none; background: none; color: var(--ink-faint); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform .15s; }
-  .off-row-x:active { transform: scale(.85); }
-  .off-actions { display: flex; gap: 8px; }
-  .off-btn {
-    flex: 1;
-    padding: 10px 14px;
-    border-radius: 999px;
-    border: 1px solid var(--glass-border);
-    background: rgba(255,255,255,.5);
-    color: var(--ink);
-    font-family: inherit; font-size: 0.8125rem;
-    cursor: pointer;
-    transition: background .2s, transform .15s;
-  }
-  .off-btn:hover { background: rgba(255,255,255,.72); }
-  .off-btn:active { transform: scale(.97); }
-  .off-btn[disabled] { opacity: .42; cursor: default; }
-  .off-btn[disabled]:hover { background: rgba(255,255,255,.5); }
-
-  /* The mark a song wears once it lives here: pinned inside the corner of its
-     own cover, which is the one spot in a library row that cannot disturb the
-     row's columns — the aligned log's title and artist columns are measured and
-     a badge that pushed a name sideways would undo that. */
-  .lib-off-pin {
-    position: absolute; right: 2px; bottom: 2px;
-    width: 15px; height: 15px; border-radius: 50%;
-    display: grid; place-items: center;
-    background: rgba(255, 255, 255, .93);
-    color: var(--ink);
-    box-shadow: 0 1px 3px rgba(17, 17, 20, .28);
-  }
-  /* One notch more specific than `.lib-sc-art svg`, which stretches any icon
-     inside a cover to the cover's own size. */
-  .lib-sc-art .lib-off-pin svg { width: 9px; height: 9px; }
 
   /* ============ Bottom chrome ============
      The reference app's bottom treatment: one floating pill bar pinned
@@ -2631,6 +2471,7 @@
   .nav-glider-fill {
     position: absolute; inset: 0; border-radius: 999px;
     background: rgba(17, 17, 20, .07);
+    animation: navBreathe 7.4s ease-in-out infinite;
   }
   /* A soft copy left behind by the travel, so a fast move leaves a wake instead
      of a line. It is offset against the direction of travel, which is the only
@@ -2680,6 +2521,11 @@
   }
   /* Idle life. Slow enough that it reads as breathing rather than bouncing, and
      it is the reason the bar is never completely still. */
+  @keyframes navBreathe {
+    0%, 100% { transform: scale(1, 1); }
+    42%      { transform: scale(.994, 1.07); }
+    72%      { transform: scale(1.006, .982); }
+  }
   /* Thrown, carried, landed — one arc with no join in it. The body flattens and
      leans into the direction of travel as it is released, stays compressed for
      the middle of the journey the way a moving object does, then releases and
@@ -2947,21 +2793,48 @@
   /* == 1. The cover ======================================================= */
   .mp-art-wrap { position: relative; flex: 0 0 auto; width: 24px; height: 24px; }
   .mini-player .mp-art { width: 24px; height: 24px; }
-  /* The pill holds still when nothing is happening to it.
+  /* A slow drift inside its own frame while playing: a now-playing surface
+     should never be perfectly still. Scale only, 1 → 1.06 over 14s, so it is
+     noticed rather than watched. */
+  @keyframes mpArtDrift {
+    0%, 100% { transform: scale(1) translate(0, 0); }
+    50%      { transform: scale(1.06) translate(-1px, .5px); }
+  }
+  .mini-player.playing .mp-art img { animation: mpArtDrift 14s ease-in-out infinite; }
+  /* The FRAME breathes while the picture inside it wanders.
 
-     It used to carry eleven perpetual animations — the cover image drifting
-     inside its frame on a 14s clock, the frame breathing on 2.6s, a specular
-     streak crossing the cover on 7.4s, a halo pulsing and wandering on 3.6s, the
-     meter's container breathing on 2.8s, the two up-next lines floating on 7.5s
-     out of phase, that block beating every 6.5s, the progress head pulsing on
-     2.6s, a sheen sweeping the pill on 6.8s and a hairline light on 9.4s. Two of
-     them were argued for in a comment as deliberately unsynchronised so the loop
-     would never repeat — which is a lot of engineering for a decoration that
-     carries no information: the four-bar meter already says "playing", and the
-     cover, the title and the clock already say what is playing.
+     Two motions, two elements, two clocks — and that is the whole point. A
+     single scale on one element is a thing that grows; a 2.6s breath on the frame
+     with a 14s drift on the image inside it never repeats the same relationship
+     twice, so the cover reads as alive rather than as looping. The amplitude is
+     deliberately tiny (~3.5% at its widest): this must register as the pill being
+     on, not as an animation being played.
 
-     What remains is motion with a job: the meter (playing), the buffer sweep
-     (buffering), the entrances and exits, and the press feedback. */
+     Declared BEFORE the transient art rules below, because `animation` is a
+     shorthand — when a track arrives, `art-in` runs and this pauses; when its
+     class is removed, the breath resumes on its own. */
+  @keyframes mpArtBreath {
+    0%, 100% { transform: scale(1); }
+    42%      { transform: scale(1.035); }
+    70%      { transform: scale(1.012); }
+  }
+  .mini-player.playing .mp-art { animation: mpArtBreath 2.6s ease-in-out infinite; }
+  /* A specular streak crossing the cover, on its own clock again: the pill's
+     sheen runs at 6.8s, the top-edge light at 9.4s, this at 7.4s. Three sweeps
+     that never sync is the difference between a surface that catches light and a
+     surface with a looping GIF on it. `::after` is free here — only the
+     mini-player itself uses its pseudo-elements. */
+  .mini-player .mp-art::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    opacity: 0; transform: translateX(-140%) skewX(-18deg);
+    background: linear-gradient(100deg, rgba(255,255,255,0) 36%, rgba(255,255,255,.5) 50%, rgba(255,255,255,0) 64%);
+  }
+  @keyframes mpCoverStreak {
+    0%, 58% { transform: translateX(-140%) skewX(-18deg); opacity: 0; }
+    67%     { opacity: .9; }
+    100%    { transform: translateX(140%) skewX(-18deg); opacity: 0; }
+  }
+  .mini-player.playing .mp-art::after { animation: mpCoverStreak 7.4s ease-in-out infinite 1.1s; }
   /* A track arrives: the cover flips up into its frame. */
   @keyframes mpArtIn {
     0%   { opacity: 0; transform: translateY(8px) scale(.8) rotate(-7deg); }
@@ -2987,6 +2860,12 @@
      pulses is light moving through something — which is the whole "alive" ask.
      The travel is small on purpose (±1.5px against a 5px inset) so it stays a
      glow rather than becoming a blob with a position. */
+  @keyframes mpGlow {
+    0%, 100% { opacity: .3;  transform: scale(.92) translate(0, 0); }
+    33%      { opacity: .52; transform: scale(1.06) translate(1.5px, -.6px); }
+    50%      { opacity: .62; transform: scale(1.12) translate(0, 0); }
+    72%      { opacity: .5;  transform: scale(1.05) translate(-1.4px, .7px); }
+  }
   .mini-player .mp-glow {
     position: absolute; inset: -5px; border-radius: 12px;
     pointer-events: none; opacity: .3; transform: scale(.92);
@@ -2995,8 +2874,7 @@
     background: radial-gradient(closest-side, rgba(255,255,255,.85), rgba(255,255,255,0));
     transition: opacity .45s var(--ease-out), transform .45s var(--ease-out);
   }
-  /* The halo is a static light now, lit while the track plays (see the opacity
-     transition on .mp-glow above). */
+  .mini-player.playing .mp-glow { animation: mpGlow 3.6s ease-in-out infinite; }
 
   /* == 2. The four-bar meter ============================================= */
   /* One keyframe, four staggered instances. `scaleY` from a bottom origin, so
@@ -3019,15 +2897,19 @@
     transform: scaleY(.28);
   }
   .mini-player.playing .mp-eq { opacity: 1; }
+  /* The four bars were four independent animations with nothing holding them
+     together. A slow, shared opacity breath on their container makes the group
+     read as one meter that swells, with the bars still doing their own thing
+     inside it. */
+  @keyframes mpEqHalo {
+    0%, 100% { opacity: .74; }
+    46%      { opacity: 1; }
+  }
+  .mini-player.playing .mp-eq { animation: mpEqHalo 2.8s ease-in-out infinite; }
   .mini-player.playing .mp-eq i { animation: mpEq 1.05s ease-in-out infinite; }
   .mini-player.playing .mp-eq i:nth-child(2) { animation-duration: .82s; animation-delay: .12s; }
   .mini-player.playing .mp-eq i:nth-child(3) { animation-duration: 1.24s; animation-delay: .05s; }
   .mini-player.playing .mp-eq i:nth-child(4) { animation-duration: .94s; animation-delay: .2s; }
-  /* With the equaliser's analyser driving them, the bars are the music rather
-     than a loop that resembles it — so the keyframe steps aside (an animation
-     would otherwise outrank the inline transform) and the only thing left moving
-     is one compositor-owned scale per bar. */
-  body.eq-live .mini-player.playing .mp-eq i { animation: none; }
 
   /* == 3. The two text lines ============================================= */
   /* Animated separately and out of phase, so a swap cascades — title, then the
@@ -3057,10 +2939,26 @@
     100% { transform: translateX(110%); opacity: 0; }
   }
   .mini-player .mp-next { position: relative; overflow: hidden; border-radius: 6px; }
-  /* The up-next block is a label, not an invitation: it says what is next and
-     one tap plays it. It used to float (two lines out of phase) and beat every
-     6.5s, which is decoration on a control the eye already finds — the third of
-     the pill with the cover on the left and the clock above it. */
+  /* The up-next third of the pill had no idle motion at all: two lines of dead
+     type next to a cover that breathes. It now floats, and the two lines float
+     OUT OF PHASE with each other (1.3s apart on a 7.5s cycle), which is what
+     stops two neighbouring lines from reading as one object juddering. */
+  @keyframes mpNextFloat {
+    0%, 100% { transform: translateY(0); }
+    38%      { transform: translateY(-.7px); }
+    72%      { transform: translateY(.35px); }
+  }
+  .mini-player.playing .mp-next-t { animation: mpNextFloat 7.5s ease-in-out infinite; }
+  .mini-player.playing .mp-next-a { animation: mpNextFloat 7.5s ease-in-out infinite 1.3s; }
+  /* And the block itself gives one soft beat every 6.5s — an invite to tap, not a
+     demand, so the amplitude is 2% and the settle is slow. Declared before
+     `next-in` so a track change takes the property over cleanly. */
+  @keyframes mpNextHeartbeat {
+    0%, 82%, 100% { transform: scale(1); }
+    86%           { transform: scale(1.022); }
+    93%           { transform: scale(.998); }
+  }
+  .mini-player.playing .mp-next { animation: mpNextHeartbeat 6.5s ease-in-out infinite; }
   .mini-player.next-in .mp-next { animation: mpNextIn .42s var(--ease-out) .07s both; }
   .mini-player.next-in .mp-next::after {
     content: ''; position: absolute; inset: 0; pointer-events: none;
@@ -3105,6 +3003,10 @@
     transition: transform .95s linear;
   }
   .mini-player:not(.playing) .mp-prog-fill { transition-duration: .25s; }
+  @keyframes mpHeadPulse {
+    0%, 100% { opacity: .35; transform: scale(.7); }
+    50%      { opacity: 1;   transform: scale(1.15); }
+  }
   /* The playhead used to be positioned with `left`, animated, and re-written
      about four times a second — a LAYOUT of the whole pill on every tick, for a
      6px dot. It is a transform now, against the measured width of the track, so
@@ -3123,14 +3025,38 @@
     background: rgba(17,17,20,.35); opacity: .35; transform: scale(.7);
   }
   .mini-player.playing .mp-prog-head { opacity: 1; }
+  /* The pulse lives on the child so it cannot fight the position it sits on —
+     one element cannot animate its transform in two directions at once. */
+  .mini-player.playing .mp-prog-head::after { animation: mpHeadPulse 2.6s ease-in-out infinite; }
 
-  /* == 7. The pill's own surface =========================================
-     It has no pseudo-elements left. `::before` was a sheen sweeping the glass
-     every 6.8s and `::after` a hairline light running the top edge every 9.4s —
-     two invisible layers with two infinite animations, kept in step with
-     nothing, on the smallest surface in the app. The pill is a plate now (see
-     the chrome rule: it is near-opaque, not a window), and a sweep across an
-     opaque plate is a light with nothing to catch. */
+  /* == 7. The pill's own surface ========================================= */
+  /* A sheen travelling across the glass, and a separate hairline light running
+     along the top edge — two passes at two speeds, which is what stops a long
+     idle loop from looking like one thing clicking round and round. */
+  .mini-player::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    opacity: 0; transform: translateX(-130%);
+    background: linear-gradient(100deg, rgba(255,255,255,0) 34%, rgba(255,255,255,.42) 50%, rgba(255,255,255,0) 66%);
+  }
+  @keyframes mpSheen {
+    0%, 64% { transform: translateX(-130%); opacity: 0; }
+    72%     { opacity: .85; }
+    100%    { transform: translateX(130%); opacity: 0; }
+  }
+  .mini-player.playing::before { animation: mpSheen 6.8s ease-in-out infinite; }
+  /* `::after` is the top-edge light. It used to be a grain texture with
+     `display: none` on it — a decoration nobody could see either way. */
+  .mini-player::after {
+    content: ''; position: absolute; left: 0; right: 0; top: 0; height: 1px;
+    pointer-events: none; opacity: 0; transform: translateX(-100%);
+    background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.95), rgba(255,255,255,0));
+  }
+  @keyframes mpEdgeLight {
+    0%, 70% { transform: translateX(-100%); opacity: 0; }
+    80%     { opacity: .9; }
+    100%    { transform: translateX(100%); opacity: 0; }
+  }
+  .mini-player.playing::after { animation: mpEdgeLight 9.4s ease-in-out infinite .8s; }
 
   /* == 8. Buffering ====================================================== */
   /* A stalled stream has no visual language of its own: the pill keeps its
@@ -3361,10 +3287,6 @@
     animation: popIn .26s var(--ease-out) both;
     transition: transform .16s var(--ease-out), color .2s;
   }
-  /* A 30px dot is what the bar wants to look like; 44px is what a thumb needs.
-     The pseudo-element carries the difference and moves nothing on screen — the
-     same idiom .lib-pl-back and the back button use. */
-  .s-bar-clear::before { content: ''; position: absolute; inset: -8px; border-radius: inherit; }
   .s-bar-clear:active { transform: scale(.86); }
   .s-bar-clear:hover { color: var(--ink); }
   @keyframes popIn { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: none; } }
@@ -3630,73 +3552,6 @@
   @supports not ((backdrop-filter: blur(2.2px)) or (-webkit-backdrop-filter: blur(2.2px))) {
     [data-lg-glass] { background-color: rgba(255, 255, 255, .74); }
   }
-
-  /* ============ Panel glass: the one treatment the chrome is not in ============
-     Everything above is the app's material as it has always been, and this group
-     is only the panels that are genuinely windows onto content — opted in with
-     `data-lg-glass="panel"`, which liquid-glass.js treats exactly like a bare
-     `data-lg-glass` (the attribute value is invisible to it).
-
-     Why a second treatment at all: the refraction that liquid-glass.js applies
-     bends the backdrop at an element's rim, and for the panels it was bending a
-     backdrop nobody could see. Every one of them carried a plate between .82 and
-     1.0 alpha — the playlist picker was literally alpha 1.04, clamped to a solid
-     slab — so the rim was refracting a layer that was already opaque white, and
-     the material read as a flat pale card with an expensive filter running
-     invisibly behind it.
-
-     So the plate gets thinner and the frost gets deeper, and the definition
-     moves to the edge, where glass actually has it:
-
-       * three background layers, painted bottom-up — a rim that is bright where
-         light would arrive and dark where it would not (instead of one flat ink
-         hairline), the fill, then a sheen across the top;
-       * a transparent border, so the rim gradient shows *through the border
-         ring* rather than being clipped inside the padding box;
-       * the fill clipped to the padding box, so the backdrop and its blur stay
-         visible in that ring.
-
-     It stays a light surface and it keeps every one of the app's radii: this is
-     richness inside the existing language, not a new one. The nav pill, the mini
-     player and the player bar are deliberately NOT in the group — those were
-     made near-opaque on measured contrast grounds, because a scrolling list of
-     type behind them is exactly what made their labels unreadable. */
-  [data-lg-glass="panel"] {
-    /* What the plate reads through. Sheets may thin it further. */
-    --lg-tint: rgba(var(--chrome), .78);
-    border: 1px solid transparent;
-    background-color: transparent;
-    background-image:
-      linear-gradient(180deg,
-        rgba(255, 255, 255, .40) 0%,
-        rgba(255, 255, 255, .05) 48%,
-        rgba(255, 255, 255, 0) 80%),
-      linear-gradient(0deg, var(--lg-tint), var(--lg-tint)),
-      linear-gradient(150deg,
-        rgba(255, 255, 255, .92) 0%,
-        rgba(255, 255, 255, .30) 16%,
-        rgba(17, 17, 20, .13) 54%,
-        rgba(255, 255, 255, .62) 100%);
-    background-origin: border-box;
-    background-clip: padding-box, padding-box, border-box;
-    /* Deeper than the pills on purpose: a panel is opened, read and dismissed,
-       while a pill sits under a scrolling page for the whole session. In
-       Chromium on a wide screen liquid-glass.js replaces this with the SVG
-       filter, whose own blur is the desktop counterpart of this number. */
-    -webkit-backdrop-filter: blur(14px) saturate(185%);
-    backdrop-filter: blur(14px) saturate(185%);
-    /* A tight dark edge under a wide soft one. One enormous blur reads as a
-       smudge; two scales read as a surface above a page. */
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, .85),
-      inset 0 -16px 30px -18px rgba(17, 17, 20, .10),
-      0 1px 2px rgba(17, 17, 20, .05),
-      0 20px 48px -20px rgba(17, 17, 20, .28);
-  }
-  /* The rail runs off the left edge of the window: no left hairline to brighten
-     and no left rim to catch light. */
-  .sidebar[data-lg-glass="panel"] { border-left-width: 0; }
-
   /* Closed chrome: a shade of white, not a window.
 
      At 17% the bar was a window onto whatever scrolled under it, and the labels
@@ -3717,17 +3572,42 @@
     background-image: none !important;
   }
 
-  /* A window onto the covers is not a surface you can read from.
-
-     At 17% the pill let the list underneath it show straight through the track
-     title and the up-next line, so two sets of type were composited on top of
-     each other (measured: plate rgba(255,255,255,.17), its own ink #111114). It
-     is chrome, not glass: the same shade the nav pill already uses, which is
-     what "the chrome reads as one material" was supposed to mean. */
-  .bottom-chrome .mini-player,
-  .bottom-chrome .mini-player:active {
-    background-color: rgba(252, 252, 253, .93) !important;
+  /* ---- Glass scroll rail ---------------------------------------------------
+     The native scrollbar is hidden on purpose (see .main): on a full-bleed
+     layout it is the one control that would sit INSIDE the screen instead of
+     against its edge. This is the position indicator instead — a glass thumb
+     travelling over the content, in the same material as the rest of the chrome.
+     It is PAINTED glass, not a backdrop-filter: a filter here would re-sample
+     everything behind a constantly moving element, which is exactly what made
+     the nav bar stutter before. It costs one composited transform per frame and
+     occupies no layout at all, so unlike a real scrollbar it cannot narrow the
+     content column and break the edge-to-edge fit. */
+  .glass-rail {
+    position: absolute; top: 0; right: 3px;
+    bottom: calc(var(--dock-h) + 10px);
+    width: 5px; z-index: 40;
+    opacity: 0; pointer-events: none;
+    transition: opacity .34s var(--ease-out);
+  }
+  .glass-rail.on { opacity: 1; }
+  .glass-rail > i {
+    position: absolute; left: 0; top: 0; width: 5px; min-height: 34px;
+    border-radius: 999px; transform: translateY(0); will-change: transform;
+    background: linear-gradient(180deg, rgba(255,255,255,.97) 0%, rgba(232,232,238,.86) 55%, rgba(247,247,250,.94) 100%);
+    box-shadow: inset 0 0 0 1px rgba(17,17,20,.16), inset 0 1px 0 rgba(255,255,255,1), 0 1px 6px rgba(17,17,20,.18);
+  }
+  /* A highlight riding the leading edge, so the thumb reads as a solid piece of
+     glass rather than a grey smear. */
+  .glass-rail > i::after {
+    content: ''; position: absolute; inset: 0; border-radius: inherit;
+    background: linear-gradient(90deg, rgba(255,255,255,.9), rgba(255,255,255,0) 64%);
+  }
+  .bottom-chrome .mini-player {
+    background-color: rgba(255, 255, 255, .17) !important;
     background-image: none !important;
+  }
+  .bottom-chrome .mini-player:active {
+    background-color: rgba(255, 255, 255, .17) !important;
   }
 
   /* ============ Mobile animation budget ============     Everything here is a per-frame cost on a phone: a wide blur is re-filtered
@@ -3744,14 +3624,6 @@
       backdrop-filter: blur(2.2px) saturate(170%);
     }
     .player-overlay .bg-art { filter: blur(21px) brightness(.6) saturate(1.25); }
-    /* The panels' frost is a desktop luxury too, and for the same measurement: at
-       78% white the plate is what carries the surface, a 14px radius over a 2.2px
-       one is barely visible through it, and a panel stays open while the list
-       behind it scrolls — the exact case the pills were kept cheap for. */
-    [data-lg-glass="panel"] {
-      -webkit-backdrop-filter: blur(3.5px) saturate(180%);
-      backdrop-filter: blur(3.5px) saturate(180%);
-    }
     /* The full-screen grain blend is a full-viewport composite; on a phone it
        is the difference between a clean sheet animation and a stuttering one. */
     .grain { mix-blend-mode: normal; opacity: .05; }
@@ -3792,19 +3664,37 @@
     display: grid; place-items: center;
     isolation: isolate;
   }
-  .hm-mark { width: 72%; height: 72%; }
-  /* The mark used to dance its four bars whenever anything was playing, plus a
-     separate faster variant of the same dance with its own delays. Both are
-     gone: the mark is the app's own logo, and a logo that twitches beside the
-     "Good evening" line tells you nothing the mini player is not already
-     telling you in words. */
-  .home-mark.playing { box-shadow: 0 10px 30px rgba(17,17,20,.22), inset 0 1px 0 rgba(255,255,255,.95); }
+  .hm-bars { width: 68%; height: 68%; overflow: visible; }
+  .hm-bar {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: hmDance 2.6s cubic-bezier(.45,0,.55,1) infinite;
+  }
+  .hm-bar:nth-child(2) { animation-delay: .32s; }
+  .hm-bar:nth-child(3) { animation-delay: .64s; }
+  .hm-bar:nth-child(4) { animation-delay: .96s; }
+  @keyframes hmDance {
+    0%, 100% { transform: scaleY(.52); }
+    34%      { transform: scaleY(1); }
+    62%      { transform: scaleY(.72); }
+  }
+  /* Playing: the same gesture, faster. The silhouette at rest is untouched — at
+     any scale above zero the bars still read as the logo, so the animation is
+     additive rather than a second identity. */
+  .home-mark.playing { box-shadow: 0 10px 30px rgba(198,43,92,.3), inset 0 1px 0 rgba(255,255,255,.95); }
+  .home-mark.playing .hm-bar { animation-duration: 1.15s; }
+  .home-mark.playing .hm-bar:nth-child(2) { animation-delay: .14s; }
+  .home-mark.playing .hm-bar:nth-child(3) { animation-delay: .28s; }
+  .home-mark.playing .hm-bar:nth-child(4) { animation-delay: .42s; }
   @media (min-width: 900px) {
     .home-mark { width: 64px; height: 64px; border-radius: 20px; }
   }
+  @media (prefers-reduced-motion: reduce) {
+    .hm-bar { animation: none; }
+  }
   .home-greet {
     font-size: clamp(1.5rem, 4.6vw, 2rem);
-    font-weight: var(--fw-base); letter-spacing: -.6px; line-height: 1.1;
+    font-weight: var(--fw-thin); letter-spacing: -.6px; line-height: 1.1;
   }
   .home-sub { margin-top: 7px; font-size: 0.875rem; color: var(--ink-faint); }
   .home-stats { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -4080,15 +3970,7 @@
     /* One source of truth for the card width: the cards read it, and so does any
        rule that needs to reason about a single step of the deck. */
     --card-w: clamp(170px, 45vw, 272px);
-    /* The gap has to clear the lean.
-
-       A centred card is scaled to 1.18 and every card is tilted, which puts
-       about 12px of artwork outside each side of its own box — and its
-       neighbour leans roughly 15px back into it. At a 16px gap the two
-       overlapped by ~11px (measured: one card's art ran 22→240px, the next
-       started at 229px), so the Rock tile covered the end of Pop's own label:
-       "93 songs" read as "93". 32px is the two overhangs plus a little air. */
-    display: flex; gap: 32px;
+    display: flex; gap: 16px;
     overflow-x: auto; overflow-y: hidden;
     /* Vertical room for the leaning cards — a rotated square is taller than the
        square, and this scroller clips (it must, to scroll sideways). */
@@ -4141,14 +4023,6 @@
      a card leaving the screen dissolve instead of being sliced. */
   .rail-wrap {
     position: relative;
-    /* The covers in a deck write their own z-index (up to 100) so the middle one
-       can sit in front of its neighbours. Without a scope on the wrapper they
-       competed with the app's chrome in the ROOT stacking context and painted
-       over it — measured: at four points inside the desktop player bar's rect,
-       the element on top was a shelf cover, so the bar's own title, clock and
-       buttons were covered by artwork. An isolated rail keeps that ordering
-       inside itself, where it means something. */
-    isolation: isolate;
     /* Per side, not `margin-inline`: the shorthand used the LEFT inset for both
        edges, so on a landscape notched phone the rail overhung the right side by
        the width of the notch. */
@@ -4193,12 +4067,9 @@
   .fan-art {
     position: relative; width: 100%; aspect-ratio: 1;
     border-radius: 26px; overflow: hidden;
-    /* A visible tile even when there is no cover. It used to be a white wash,
-       which on a white page is nothing at all — a card that failed to load left
-       a hole in the deck. It now shares the neutral grey the other cover
-       placeholders use (see `.cov-*` and `.pb-art`), so a missing cover reads as
-       a cover with no artwork rather than as a gap. */
-    background: radial-gradient(90% 70% at 50% 32%, #d2d2db 0%, #b0b0bc 45%, #8d8d99 100%);
+    /* A visible tile even when there is no cover: with this behind it, a failed
+       image leaves a coloured card rather than a hole in the deck. */
+    background: linear-gradient(150deg, rgba(255,255,255,.55), rgba(255,255,255,.24));
     transform:
       rotate(calc(var(--r, 0) * 1deg))
       scale(calc(.82 + .18 * var(--p)))
@@ -4211,10 +4082,9 @@
        itself cannot break that way, and because --p falls off smoothly toward the
        edges the deck fades INTO the screen edge instead of being sliced at it. */
     opacity: calc(.46 + .54 * var(--p));
-    /* neutral ink, not the violet these were tuned to against a tinted page */
     box-shadow:
-      0 22px 48px -18px rgba(17,17,20,.34),
-      0 2px 10px -4px rgba(17,17,20,.18);
+      0 22px 48px -18px rgba(40,10,35,.55),
+      0 2px 10px -4px rgba(40,10,35,.35);
     /* Deliberately NO transition on transform: this is a scroll-linked effect, so
        an ease here would trail the finger and read as lag. The scroll is already
        frame-synced; only the fade is eased. */
@@ -4323,8 +4193,7 @@
     /* No `padding-inline` here: the rail owns its own bleed now (see .fan-rail),
        and a second declaration at this width would put the clip back inside the
        content column. */
-    /* Same clearance at the wider card (scale 1.18 of 243px is ~22px a side). */
-    .fan-rail { --card-w: clamp(200px, 19vw, 300px); gap: 44px; padding-block: 36px 30px; }
+    .fan-rail { --card-w: clamp(200px, 19vw, 300px); gap: 22px; padding-block: 36px 30px; }
     .fan-art { border-radius: 30px; }
   }
 
@@ -4513,9 +4382,15 @@
      Indicators are deliberately NOT here. Buffering, uploading, searching,
      listening and the playing meter all keep running during a scroll, because a
      progress indicator that freezes when you scroll is a lie about progress. */
-  /* One entry left. Every other loop this list used to pause has been deleted
-     outright (see the pill's own section), which is the better fix: an animation
-     that has to be paused during a scroll should generally not exist. */
+  html.is-scrolling .nav-glider-fill,
+  html.is-scrolling .mini-player.playing::before,
+  html.is-scrolling .mini-player.playing::after,
+  html.is-scrolling .mini-player.playing .mp-art img,
+  html.is-scrolling .mini-player.playing .mp-glow,
+  html.is-scrolling .mini-player.playing .mp-prog-head::after,
+  html.is-scrolling .logo .mark,
+  html.is-scrolling .hm-bar,
+  html.is-scrolling .play-chip::after,
   html.is-scrolling .lib-sc-art[data-cover]::after {
     animation-play-state: paused;
   }
@@ -4552,13 +4427,6 @@
     }
   }
 </style>
-<!-- The desktop design. It is a layout sheet: the material (glass, radii,
-     shadows, gradients) is decided above and is not restated here. Everything
-     in it is inside one `min-width: 900px` media query, so it layers on top of
-     the phone app rather than forking it — the rail, the log and the floating
-     player only exist on a wide screen, and every rule the phone needs is
-     untouched. See the file's own header. -->
-<link rel="stylesheet" href="desktop-view.css" />
 </head>  <body>
 
 <div class="bg-layer" id="bgA" aria-hidden="true"></div>
@@ -4568,19 +4436,24 @@
 <!-- ============ SVG icon library ============ -->
 <svg width="0" height="0" style="position:absolute">
   <defs>
+    <!-- The mark's ink, in USER SPACE so the sweep runs across
+         the whole mark rather than restarting inside each bar — four
+         independently coloured pills read as a chart, one sweep reads as a logo. -->
+    <linearGradient id="wfBars" gradientUnits="userSpaceOnUse" x1="1.5" y1="2" x2="30.5" y2="30">
+      <stop offset="0" stop-color="#ff2d55"/>
+      <stop offset="0.15" stop-color="#ff1493"/>
+      <stop offset="0.3" stop-color="#c2185b"/>
+      <stop offset="0.45" stop-color="#9b59b6"/>
+      <stop offset="0.6" stop-color="#7c3aed"/>
+      <stop offset="0.75" stop-color="#4f46e5"/>
+      <stop offset="0.88" stop-color="#0ea5e9"/>
+      <stop offset="1" stop-color="#06b6d4"/>
+    </linearGradient>
     <!-- shuffle: two crossing swapped paths with arrowheads -->
-    <!-- Shuffle and repeat are the two line glyphs in a row of solid ones
-         (play, pause, skip), and at 1.6 they read as thin wireframes beside the
-         filled triangles — lighter, and 18 units wide against the skips' 13, so
-         bigger AND fainter at once. The geometry is kept and scaled into the
-         same optical box as the skips; the weight is carried by one group
-         instead of repeated on every path. -->
     <symbol id="i-shuffle" viewBox="0 0 24 24">
-      <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 6.8h2.4c1.4 0 2.7.65 3.6 1.75l5.6 6.9c.9 1.1 2.2 1.75 3.6 1.75h2.1"/>
-        <path d="M3 17.2h2.4c1.4 0 2.7-.65 3.6-1.75l1.5-1.85M13.9 10.4l.7-.85c.9-1.1 2.2-1.75 3.6-1.75h2.1"/>
-        <path d="m17.9 3.6 3.1 2.6-3.1 2.6M17.9 15.2l3.1 2.6-3.1 2.6"/>
-      </g>
+      <path d="M3 6.8h2.4c1.4 0 2.7.65 3.6 1.75l5.6 6.9c.9 1.1 2.2 1.75 3.6 1.75h2.1" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M3 17.2h2.4c1.4 0 2.7-.65 3.6-1.75l1.5-1.85M13.9 10.4l.7-.85c.9-1.1 2.2-1.75 3.6-1.75h2.1" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="m17.9 3.6 3.1 2.6-3.1 2.6M17.9 15.2l3.1 2.6-3.1 2.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
     </symbol>
     <!-- check: the tick in the picker -->
     <symbol id="i-check" viewBox="0 0 24 24">
@@ -4593,11 +4466,9 @@
     </symbol>
     <!-- repeat: closed loop with two arrowheads -->
     <symbol id="i-repeat" viewBox="0 0 24 24">
-      <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M20 6.8H7.5A3.5 3.5 0 0 0 4 10.3v.4"/>
-        <path d="M4 17.2h12.5a3.5 3.5 0 0 0 3.5-3.5v-.4"/>
-        <path d="M17.4 4.2 20 6.8l-2.6 2.6M6.6 19.8 4 17.2l2.6-2.6"/>
-      </g>
+      <path d="M20 6.8H7.5A3.5 3.5 0 0 0 4 10.3v.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M4 17.2h12.5a3.5 3.5 0 0 0 3.5-3.5v-.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M17.4 4.2 20 6.8l-2.6 2.6M6.6 19.8 4 17.2l2.6-2.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
     </symbol>
     <!-- heart: large, wide lobes, shallow top notch, soft bottom point -->
     <symbol id="i-heart" viewBox="0 0 24 24">
@@ -4605,24 +4476,26 @@
            through the <use> shadow tree (see .heart-btn.liked) -->
       <path d="M12 20.6C9.3 18.4 3.4 14.1 3.4 9.5c0-2.75 2.15-4.7 4.6-4.7 1.75 0 3.25 1.05 4 2.6.75-1.55 2.25-2.6 4-2.6 2.45 0 4.6 1.95 4.6 4.7 0 4.6-5.9 8.9-8.6 11.1Z" fill="var(--heart-fill, none)" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
     </symbol>
-    <!-- The mark: a jolly roger flown from a note. The ink is one shape — flag,
-         pole, head — and the skull and crossbones are knocked out in the tile's
-         own white, so the silhouette is what survives at 28px rather than a
-         drawn skull. One symbol, not two: the sidebar, the library header and
-         the home tile all fly this one, and the old "dark"/"light" pair were
-         the same four rectangles written out twice. -->
+    <!-- Wavefy mark: four bars. Chosen from the logo lab (logo-lab.html), where
+         it was the only direction that held its silhouette at 28px. The bars
+         share one gradient sweep and a common baseline at y = 27, so the dance
+         scales them toward the same line instead of each from its own edge. -->
     <symbol id="i-logo" viewBox="0 0 32 32">
-      <path fill="currentColor" d="M5.5 2.2H28.9L24.1 9.1 28.9 16H5.5Z"/>
-      <rect fill="currentColor" x="5.5" y="2.2" width="2.6" height="23.4" rx="1.3"/>
-      <ellipse fill="currentColor" cx="8.9" cy="24.9" rx="5.5" ry="4.3" transform="rotate(-20 8.9 24.9)"/>
-      <g fill="none" stroke="#ffffff" stroke-width="2.25" stroke-linecap="round">
-        <path d="M11.9 13.7 21.1 4.5"/>
-        <path d="M11.9 4.5 21.1 13.7"/>
-      </g>
-      <circle fill="#ffffff" cx="16.5" cy="9.1" r="4.1"/>
-      <rect fill="#ffffff" x="14.4" y="11.2" width="4.2" height="2.6" rx="1.25"/>
-      <circle fill="currentColor" cx="15" cy="8.6" r="1.05"/>
-      <circle fill="currentColor" cx="18" cy="8.6" r="1.05"/>
+      <g fill="currentColor">
+      <rect x="3.9" y="11" width="4.4" height="16" rx="2.2"/>
+      <rect x="10.5" y="5" width="4.4" height="22" rx="2.2"/>
+      <rect x="17.1" y="15" width="4.4" height="12" rx="2.2"/>
+      <rect x="23.7" y="8" width="4.4" height="19" rx="2.2"/>
+    </g>
+    </symbol>
+    <!-- Light variant: the same mark, for the glass chips and headers -->
+    <symbol id="i-logo-light" viewBox="0 0 32 32">
+      <g fill="currentColor">
+      <rect x="3.9" y="11" width="4.4" height="16" rx="2.2"/>
+      <rect x="10.5" y="5" width="4.4" height="22" rx="2.2"/>
+      <rect x="17.1" y="15" width="4.4" height="12" rx="2.2"/>
+      <rect x="23.7" y="8" width="4.4" height="19" rx="2.2"/>
+    </g>
     </symbol>
     <!-- mic: the AI recognition control -->
     <symbol id="i-mic" viewBox="0 0 24 24">
@@ -4638,19 +4511,6 @@
     <symbol id="i-cloud-up" viewBox="0 0 24 24">
       <path d="M7.4 18.6A4.3 4.3 0 0 1 7.2 10a5.4 5.4 0 0 1 10.4 1.4 3.6 3.6 0 0 1-.4 7.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
       <path d="M12 20.6v-7.4M9.2 15.9 12 13.1l2.8 2.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-    </symbol>
-    <!-- download: saving a song onto this device for offline listening -->
-    <symbol id="i-download" viewBox="0 0 24 24">
-      <path d="M12 3.6v10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-      <path d="M7.9 9.7 12 13.8l4.1-4.1" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M4.7 15.2v2.4a2.6 2.6 0 0 0 2.6 2.6h9.4a2.6 2.6 0 0 0 2.6-2.6v-2.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-    </symbol>
-    <!-- equaliser: three faders, which is what the panel opens -->
-    <symbol id="i-eq" viewBox="0 0 24 24">
-      <path d="M6 3.6v16.8M12 3.6v16.8M18 3.6v16.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-      <circle cx="6" cy="8.6" r="2.5" fill="currentColor"/>
-      <circle cx="12" cy="15" r="2.5" fill="currentColor"/>
-      <circle cx="18" cy="7" r="2.5" fill="currentColor"/>
     </symbol>
     <symbol id="i-spark" viewBox="0 0 24 24">
       <path d="M12 3.2 13.9 9 19.7 11 13.9 13 12 18.8 10.1 13 4.3 11 10.1 9Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
@@ -4686,11 +4546,30 @@
       <circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
       <path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
     </symbol>
+    <symbol id="i-pulse" viewBox="0 0 24 24">
+      <path d="M3 12h4l2.5-6 4 12 2.5-6H21" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <!-- phone / mobile app icon: Wavefy wave in rounded square -->
+    <symbol id="i-appicon" viewBox="0 0 100 100">
+      <rect width="100" height="100" rx="24" fill="none" stroke="currentColor" stroke-width="5"/>
+      <g fill="currentColor">
+        <rect x="26" y="42" width="8" height="26" rx="4"/>
+        <rect x="38" y="30" width="8" height="38" rx="4"/>
+        <rect x="50" y="48" width="8" height="20" rx="4"/>
+        <rect x="62" y="36" width="8" height="32" rx="4"/>
+      </g>
+    </symbol>
     <!-- plus: import action -->
     <symbol id="i-plus" viewBox="0 0 24 24">
       <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
     </symbol>
     <!-- music note placeholder cover for imported tracks -->
+    <!-- music note, nav-sized -->
+    <symbol id="i-note-nav" viewBox="0 0 24 24">
+      <circle cx="8" cy="17.5" r="3" fill="currentColor"/>
+      <circle cx="17" cy="15.5" r="3" fill="currentColor"/>
+      <path d="M11 17.5V6l9-2v11.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
     <symbol id="i-note" viewBox="0 0 100 100">
       <circle cx="38" cy="64" r="10" fill="rgba(255,255,255,.65)"/>
       <circle cx="66" cy="56" r="10" fill="rgba(255,255,255,.65)"/>
@@ -4714,6 +4593,18 @@
       <circle cx="50" cy="50" r="22" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="3"/>
       <circle cx="50" cy="50" r="7" fill="rgba(255,255,255,.7)"/>
     </symbol>
+    <symbol id="i-sun" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="16" fill="rgba(255,255,255,.75)"/>
+      <g stroke="rgba(255,255,255,.6)" stroke-width="5" stroke-linecap="round">
+        <path d="M50 18v10M50 72v10M18 50h10M72 50h10M27 27l7 7M66 66l7 7M73 27l-7 7M34 66l-7 7"/>
+      </g>
+    </symbol>
+    <symbol id="i-cassette" viewBox="0 0 100 100">
+      <rect x="16" y="28" width="68" height="44" rx="8" fill="none" stroke="rgba(255,255,255,.65)" stroke-width="5"/>
+      <circle cx="38" cy="50" r="7" fill="none" stroke="rgba(255,255,255,.65)" stroke-width="4"/>
+      <circle cx="62" cy="50" r="7" fill="none" stroke="rgba(255,255,255,.65)" stroke-width="4"/>
+      <path d="M32 64h36" stroke="rgba(255,255,255,.45)" stroke-width="4" stroke-linecap="round"/>
+    </symbol>
     <symbol id="i-person" viewBox="0 0 100 100">
       <circle cx="50" cy="38" r="16" fill="rgba(255,255,255,.55)"/>
       <path d="M22 86c3-18 14-27 28-27s25 9 28 27Z" fill="rgba(255,255,255,.55)"/>
@@ -4732,10 +4623,11 @@
 
 <div id="app">
 
-  <!-- ===== Sidebar (desktop) ===== -->      <aside class="sidebar" data-lg-glass="panel">
+  <!-- ===== Sidebar (desktop) ===== -->
+  <aside class="sidebar" data-lg-glass>
     <div class="logo">
-      <div class="mark"><svg width="30" height="30"><use href="#i-logo"/></svg></div>
-      Piratify
+      <div class="mark"><svg width="30" height="30"><use href="#i-logo-light"/></svg></div>
+      Wavefy
     </div>
     <nav class="side-nav">
       <button class="side-btn active" data-view="view-home"><svg width="20" height="20"><use href="#i-home"/></svg> Home</button>
@@ -4757,7 +4649,7 @@
       </div>
 
       <!-- small glass action sheet opened by the kebab button -->
-      <div class="sheet" id="sheet" hidden data-lg-glass="panel">
+      <div class="sheet" id="sheet" hidden data-lg-glass>
         <button class="sheet-item" data-action="import"><svg width="18" height="18"><use href="#i-plus"/></svg> Import music</button>
         <button class="sheet-item" data-action="refresh"><svg width="18" height="18"><use href="#i-radio"/></svg> Refresh shared library</button>
         <button class="sheet-item" data-action="identify"><svg width="18" height="18"><use href="#i-mic"/></svg> Identify a song</button>
@@ -4766,17 +4658,20 @@
         <button class="sheet-item" data-action="library"><svg width="18" height="18"><use href="#i-library"/></svg> Open library</button>
         <button class="sheet-item" data-action="playlist"><svg width="18" height="18"><use href="#i-plus"/></svg> Add to playlist</button>
         <button class="sheet-item" data-action="dedup"><svg width="18" height="18"><use href="#i-close"/></svg> Remove duplicates</button>
-        <button class="sheet-item" data-action="equaliser"><svg width="18" height="18"><use href="#i-eq"/></svg> Equaliser</button>
-        <button class="sheet-item" data-action="offline"><svg width="18" height="18"><use href="#i-download"/></svg> Offline music</button>
       </div>
 
       <div class="home-head">
         <div class="home-brand">
-          <!-- The mark. This used to be the four bars written out inline so each
-               could carry its own animation delay; the dance is gone, so it is
-               the shared symbol like every other copy of the logo. -->
+          <!-- The mark, live: the bars dance. Bars are inline rather than a <use>
+               of the symbol because each one needs its own animation delay, and
+               a shadow-tree element cannot be targeted from outside styles. -->
           <div class="home-mark" id="homeMark" aria-hidden="true">
-            <svg class="hm-mark"><use href="#i-logo"/></svg>
+            <svg class="hm-bars" viewBox="0 0 32 32" fill="currentColor">
+              <rect class="hm-bar" x="3.9" y="11" width="4.4" height="16" rx="2.2"/>
+              <rect class="hm-bar" x="10.5" y="5" width="4.4" height="22" rx="2.2"/>
+              <rect class="hm-bar" x="17.1" y="15" width="4.4" height="12" rx="2.2"/>
+              <rect class="hm-bar" x="23.7" y="8" width="4.4" height="19" rx="2.2"/>
+            </svg>
           </div>
           <div class="home-hello">
             <div class="home-greet" id="homeGreet">Your library</div>
@@ -4832,8 +4727,8 @@
       </div>
 
       <div class="empty-hint-page" id="homeEmpty" hidden>
-        <h1 class="page-title">Welcome to Piratify</h1>
-        <p class="home-note">Import music from the Library tab — covers, tags and lyrics are matched for you.</p>
+        <h1 class="page-title">Welcome to Wavefy</h1>
+        <p class="home-note">Import music from the Library tab, or open the app while songs are shared — everything appears here with real covers, tags and lyrics.</p>
       </div>
     </section>
 
@@ -4842,7 +4737,7 @@
       <!-- Compact header -->
       <div class="lib-header">
         <div class="lib-header-left">
-          <div class="lib-header-logo"><svg width="32" height="32"><use href="#i-logo"/></svg></div>
+          <div class="lib-header-logo"><svg width="32" height="32"><use href="#i-logo-light"/></svg></div>
           <div>
             <div class="lib-header-title">Your Library</div>
             <div class="lib-header-count" id="libSongCount">0 songs</div>
@@ -4876,18 +4771,12 @@
       <div class="lib-chip-row" id="libFilterChips" hidden></div>
 
       <!-- Overflow menu -->
-      <div class="lib-overflow-menu" id="libOverflowMenu" hidden data-lg-glass="panel">
+      <div class="lib-overflow-menu" id="libOverflowMenu" hidden data-lg-glass>
         <button class="lib-overflow-item" id="importBtn"><svg width="16" height="16"><use href="#i-plus"/></svg> Import music</button>
         <button class="lib-overflow-item" id="identifyBtn"><svg width="16" height="16"><use href="#i-mic"/></svg> Identify song</button>
         <button class="lib-overflow-item" id="cloudAllBtn"><svg width="16" height="16"><use href="#i-cloud-up"/></svg> Upload to cloud</button>
         <button class="lib-overflow-item" id="shuffleAllBtn"><svg width="16" height="16"><use href="#i-shuffle"/></svg> Shuffle all</button>
         <button class="lib-overflow-item" id="dedupBtn"><svg width="16" height="16"><use href="#i-close"/></svg> Remove duplicates</button>
-        <!-- Both of these are also on the Home kebab sheet, and they are here as
-             well on purpose: that sheet is `mobile-only` and lives inside the
-             Home view, so on a wide screen — where this menu is the reachable
-             one — it would be a feature nobody could open. -->
-        <button class="lib-overflow-item" id="eqBtn"><svg width="16" height="16"><use href="#i-eq"/></svg> Equaliser</button>
-        <button class="lib-overflow-item" id="offlineBtn"><svg width="16" height="16"><use href="#i-download"/></svg> Offline music</button>
         <button class="lib-overflow-item" id="coverHealthBtn"><svg width="16" height="16"><use href="#i-cover-np"/></svg> Cover health</button>
         <button class="lib-overflow-item" id="publishCoversBtn"><svg width="16" height="16"><use href="#i-cover-np"/></svg> Save covers to cloud</button>
         <div class="lib-build-stamp" id="libBuildStamp"></div>
@@ -4945,7 +4834,7 @@
       </div>
 
       <!-- Sort dropdown -->
-      <div class="lib-sort-sheet" id="libSortSheet" hidden data-lg-glass="panel">
+      <div class="lib-sort-sheet" id="libSortSheet" hidden data-lg-glass>
         <button class="lib-sort-option" data-sort="added">Recently Added</button>
         <button class="lib-sort-option" data-sort="played">Recently Played</button>
         <button class="lib-sort-option" data-sort="az">A → Z</button>
@@ -4956,11 +4845,10 @@
       </div>
 
       <!-- Context menu -->
-      <div class="lib-context-menu" id="libContextMenu" hidden data-lg-glass="panel">
+      <div class="lib-context-menu" id="libContextMenu" hidden data-lg-glass>
         <button class="lib-ctx-item" data-ctx="play-next"><svg width="16" height="16"><use href="#i-skip-fwd"/></svg> Play next</button>
         <button class="lib-ctx-item" data-ctx="add-queue"><svg width="16" height="16"><use href="#i-plus"/></svg> Add to queue</button>
         <button class="lib-ctx-item" data-ctx="add-playlist"><svg width="16" height="16"><use href="#i-plus"/></svg> Add to playlist</button>
-        <button class="lib-ctx-item" data-ctx="offline"><svg width="16" height="16"><use href="#i-download"/></svg><span data-ctx-offline-label>Keep on this device</span></button>
         <button class="lib-ctx-item" data-ctx="info"><svg width="16" height="16"><use href="#i-dots"/></svg> Song info</button>
       </div>
 
@@ -5019,6 +4907,9 @@
           <button class="lib-pick-btn primary" id="libPickConfirm">Add</button>
         </div>
       </div>
+      <!-- Legacy refs for old renderLibrary compat (hidden) -->
+      <div id="artistsRow" style="display:none"></div>
+      <div id="playlistsGrid" style="display:none"></div>
     </section>
 
     <!-- SEARCH -->
@@ -5112,34 +5003,37 @@
         <div class="s-empty" id="searchEmpty" hidden>
           <div class="s-empty-icon"><svg width="22" height="22"><use href="#i-search"/></svg></div>
           <div class="s-empty-title">Nothing matches “<span id="searchEmptyTerm"></span>”</div>
-          <div class="s-empty-sub">Try a title, artist, album or genre.</div>
+          <div class="s-empty-sub">Titles, artists, albums, genres — and every word in a collaborator list.</div>
         </div>
       </div>
 
+      <!-- Legacy anchor: older listeners attach to this id, so it stays. -->
+      <div class="rows" id="searchRows" hidden></div>
     </section>
 
   </main>
 
-  <!-- ===== Desktop bottom player bar =====
-       The SAME player as the sheet, at bar scale: one transport (see TRANSPORT),
-       one renderer (renderNowPlaying), one progress model. It exists only as the
-       wide screen's persistent surface — the dock measurement reserves room for
-       it in the flow, and `isolation: isolate` on each rail stops a shelf's
-       covers painting over it. Everything it shows is written by the renderer;
-       the markup holds an honest empty state, not a demo track. -->
+  <!-- ===== Desktop bottom player bar ===== -->
   <footer class="player-bar" id="playerBar" data-lg-glass>
     <div class="pb-art"><svg><use href="#i-cover-np"/></svg></div>
     <div class="pb-info">
-      <div class="pb-title">Nothing playing</div>
-      <div class="pb-artist"></div>
+      <div class="pb-title">Count Me Out</div>
+      <div class="pb-artist">Kendrick Lamar</div>
     </div>
     <button class="pb-heart" id="pbHeart" aria-label="Like"><svg width="24" height="24"><use href="#i-heart"/></svg></button>
 
     <div class="pb-center">
-      <div class="pb-controls" data-transport></div>
-      <div class="pb-progress">
-        <div class="track" data-track><div class="fill" data-fill></div></div>
-        <div class="t-row"><span class="t-now" data-timenow>0:00</span><span class="t-total">0:00</span></div>
+      <div class="pb-controls">
+        <button class="ctrl" aria-label="Shuffle"><svg width="20" height="20"><use href="#i-shuffle"/></svg></button>
+        <button class="ctrl" aria-label="Previous"><svg width="20" height="20"><use href="#i-skip-back"/></svg></button>
+        <button class="play-toggle" data-playtoggle aria-label="Play or pause"><svg width="36" height="36" data-playicon><use href="#i-pause"/></svg></button>
+        <button class="ctrl" aria-label="Next"><svg width="20" height="20"><use href="#i-skip-fwd"/></svg></button>
+        <button class="ctrl" aria-label="Repeat"><svg width="20" height="20"><use href="#i-repeat"/></svg></button>
+      </div>
+      <div class="pb-progress" data-track>
+        <div class="fill" data-fill></div>
+        <span class="t-now" data-timenow>1:13</span>
+        <span class="t-total">3:26</span>
       </div>
     </div>
   </footer>
@@ -5159,8 +5053,8 @@
 
     <div class="np-meta">
       <div>
-        <div class="np-title"></div>
-        <div class="np-artist"></div>
+        <div class="np-title">Count Me Out</div>
+        <div class="np-artist">Kendrick Lamar</div>
       </div>
       <button class="heart-btn" id="heartBtn" aria-label="Like">
         <svg width="32" height="32"><use href="#i-heart"/></svg>
@@ -5168,22 +5062,25 @@
     </div>
 
     <div class="progress">
-      <div class="track" id="track"><div class="fill" id="fill"></div></div>
-      <div class="t-row"><span class="t-now" id="timeNow">0:00</span><span class="t-total">0:00</span></div>
+      <div class="track" id="track">
+        <div class="fill" id="fill"></div>
+        <span class="t-now" id="timeNow">1:13</span>
+        <span class="t-total">3:26</span>
+      </div>
     </div>
 
-    <!-- What plays after this one. The sheet is where you decide whether to
-         keep listening, so the decision belongs on it; the mini pill has shown
-         this line all along and the full player never did. -->
-    <div class="np-next" id="npNext" hidden>
-      <span class="np-next-k">Up next</span>
-      <span class="np-next-t" id="npNextTitle"></span>
-      <span class="np-next-a" id="npNextArtist"></span>
+    <div class="np-controls">
+      <button class="ctrl" aria-label="Shuffle"><svg width="27" height="27"><use href="#i-shuffle"/></svg></button>
+      <button class="play-toggle" id="playBtn" aria-label="Play or pause">
+        <svg width="56" height="56" id="playIcon"><use href="#i-pause"/></svg>
+      </button>
+      <button class="ctrl" aria-label="Repeat"><svg width="27" height="27"><use href="#i-repeat"/></svg></button>
     </div>
 
-    <div class="np-controls" data-transport></div>
-
-    <div class="lyrics" id="lyrics"></div>
+    <div class="lyrics">
+      One of these lives, I'ma make<br>things right
+      <div class="dim">With the wrongs I've done,<br>that's one of you now</div>
+    </div>
   </div>
 </div>
 
@@ -5224,7 +5121,7 @@
 <!-- ===== AI song recognition =====
      Records a short clip with the mic, has the server ask AudD what it is, then
      offers the match as a playable preview. -->
-<div class="mic-panel" id="micPanel" hidden data-lg-glass="panel">
+<div class="mic-panel" id="micPanel" hidden data-lg-glass>
   <div class="mic-top">
     <span class="mic-pulse"><svg width="17" height="17"><use href="#i-mic"/></svg></span>
     <div class="mic-txt">
@@ -5245,7 +5142,7 @@
     <button class="mic-btn" id="micSave" hidden>Save to library</button>
   </div>
 </div>  <!-- ===== Playlist picker / creator (glass sheet above the nav) ===== -->
-<div class="pl-sheet" id="plSheet" hidden data-lg-glass="panel">
+<div class="pl-sheet" id="plSheet" hidden data-lg-glass>
   <div class="pl-sheet-head">
     <div class="pl-sheet-title" id="plSheetTitle">Add to playlist</div>
     <button class="pl-close" id="plSheetClose" aria-label="Close"><svg width="16" height="16"><use href="#i-close"/></svg></button>
@@ -5254,58 +5151,6 @@
   <div class="pl-new">
     <input type="text" id="plNameInput" class="pl-input" placeholder="New playlist name" maxlength="60" autocomplete="off" />
     <button class="pl-create" id="plCreate">Create</button>
-  </div>
-</div>
-
-<!-- ===== Equaliser =====
-     Ten faders on one glass sheet, wearing the app's own plate, radius and
-     hairline so it reads as one more surface rather than a bolted-on settings
-     dialog. The faders are drawn rather than <input type="range">: no two
-     engines rotate a native range into a vertical fader the same way, and the
-     centre-zero fill (a boost grows up from the middle, a cut down) is the part
-     that makes the shape of a curve readable at a glance. -->
-<div class="eq-sheet" id="eqSheet" hidden data-lg-glass="panel">
-  <div class="eq-head">
-    <div class="eq-head-txt">
-      <div class="eq-title">Equaliser</div>
-      <div class="eq-sub" id="eqSub">Flat</div>
-    </div>
-    <button class="eq-switch" id="eqPower" role="switch" aria-checked="false" aria-label="Equaliser on">
-      <span class="eq-switch-knob"></span>
-      <span class="eq-switch-lbl" id="eqPowerLbl">Off</span>
-    </button>
-    <button class="eq-close" id="eqClose" aria-label="Close"><svg width="16" height="16"><use href="#i-close"/></svg></button>
-  </div>
-  <div class="eq-presets" id="eqPresets" role="tablist" aria-label="Presets"></div>
-  <div class="eq-bands" id="eqBands"></div>
-  <div class="eq-foot">
-    <span class="eq-foot-k">Preamp</span>
-    <div class="eq-fader eq-fader-x" id="eqPreamp" role="slider" tabindex="0"
-         aria-label="Preamp" aria-valuemin="-12" aria-valuemax="12" aria-valuenow="0">
-      <span class="eq-rail"><span class="eq-fill"></span><span class="eq-knob"></span></span>
-    </div>
-    <span class="eq-foot-v" id="eqPreampVal">0</span>
-  </div>
-  <p class="eq-note" id="eqNote"></p>
-</div>
-
-<!-- ===== Offline music =====
-     The saved songs, how much room they take, and the two things you can do
-     about it. A song that lives on this device says so on its own row in the
-     library; this is the ledger. -->
-<div class="off-sheet" id="offlineSheet" hidden data-lg-glass="panel">
-  <div class="off-head">
-    <div class="off-head-txt">
-      <div class="off-title">Offline music</div>
-      <div class="off-sub" id="offlineSub">Nothing saved yet</div>
-    </div>
-    <button class="off-close" id="offlineClose" aria-label="Close"><svg width="16" height="16"><use href="#i-close"/></svg></button>
-  </div>
-  <div class="off-track" id="offlineProgress" hidden><b class="off-fill" id="offlineProgressFill"></b></div>
-  <div class="off-list" id="offlineList"></div>
-  <div class="off-actions">
-    <button class="off-btn" id="offlineSaveAll">Save everything</button>
-    <button class="off-btn danger" id="offlineClear">Remove all</button>
   </div>
 </div>
 
@@ -5345,10 +5190,7 @@
     coverQueueStatus, retryCoverLookupsNow, appleCooldownRemaining, BUILD_KEY,
     invalidateCover, publishCoverAddresses,
     normalizeGenreTags, trackGenres, buildGenreIndex,
-    trackUrl, onDevice, offlineSaved, offlineRows, offlineTotalBytes, offlineQuota,
-    saveOffline, removeOffline, clearOffline,
-    eqState, eqSetEnabled, eqSetPreset, eqSetBand, eqSetPreamp, eqSpectrum, EQ_RANGE,
-  } from './piratify-core.js';
+  } from './wavefy-core.js';
   // Liquid glass is progressive enhancement: it only activates on Chromium,
   // where an SVG filter can actually be used as a backdrop-filter. Everywhere
   // else the plain blur() saturate() glass stays exactly as-is.
@@ -5606,19 +5448,7 @@
      the three animations this overlay is made of. It is set from the same two
      functions that already own the open/closed state, so there is one owner and
      no way for the two to disagree. */
-  /* On a wide screen the panel is not the immersive sheet at all: the desktop
-     design docks it as a permanent now-playing column (see desktop-view.css),
-     where it is visible from the first paint and has to stay usable whether or
-     not the app thinks it is "open". `inert` is the one thing CSS cannot undo,
-     so it is the one thing this script has to know about — and the condition is
-     the same media query the stylesheet docks it with, so the two cannot
-     disagree about whether the column exists. */
-  const paneDocked = () => window.matchMedia('(min-width: 900px)').matches;
-  const syncOverlayInert = () => {
-    overlay.inert = !paneDocked() && !overlay.classList.contains('open');
-  };
-  syncOverlayInert();
-  window.addEventListener('resize', syncOverlayInert);
+  overlay.inert = true;
   /* The lyric follow is a frame loop, so it is owned by the overlay's open state
      rather than by `timeupdate`: it starts when the panel can be seen and stops
      the moment it cannot, because a loop running behind a closed overlay is
@@ -5648,7 +5478,7 @@
     overlay.classList.add('open');
     /* Cleared before the fade-in, so the controls are reachable from the first
        frame the sheet can be seen. */
-    syncOverlayInert();
+    overlay.inert = false;
     const track = playback.current;
     if (track?.syncedLyrics?.length) { renderLyrics(track); startLyricLoop(); }
   };
@@ -5657,7 +5487,7 @@
     /* Immediately, not after the fade: the player is closed the moment its own
        close handler runs, so nothing invisible should be reachable while it
        dims out. `inert` does not hide anything, so the fade is unaffected. */
-    syncOverlayInert();
+    overlay.inert = true;
     stopLyricLoop();
   };
   document.getElementById('sidePlayer').addEventListener('click', openPlayer);
@@ -5732,40 +5562,14 @@
     openPlayer();
   });
 
-  /* ---------- ONE transport, two players ----------
-     The sheet and the desktop bar each carried their own hand-written copy of
-     these buttons, and they had already drifted: the bar had Previous and Next,
-     the sheet had neither, and the queries that bound the sheet's — 
-     `querySelectorAll('.np-controls .ctrl[aria-label="Next"]')`, twice — matched
-     nothing at all. The list, the icons, the labels and the aria live here once;
-     every `[data-transport]` container is filled from it. Size is the
-     container's business (the SVGs carry no width/height and each player scales
-     its own), so the two surfaces cannot disagree by construction. */
-  const TRANSPORT = [
-    ['shuffle', 'i-shuffle', 'Shuffle'],
-    ['prev', 'i-skip-back', 'Previous'],
-    ['toggle', 'i-pause', 'Play or pause'],
-    ['next', 'i-skip-fwd', 'Next'],
-    ['repeat', 'i-repeat', 'Repeat'],
-  ];
-  document.querySelectorAll('[data-transport]').forEach(box => {
-    box.innerHTML = TRANSPORT.map(([act, icon, label]) => act === 'toggle'
-      ? `<button class="play-toggle" data-act="toggle" aria-label="${label}"><svg data-playicon><use href="#${icon}"/></svg></button>`
-      : `<button class="ctrl" data-act="${act}" aria-label="${label}"><svg><use href="#${icon}"/></svg></button>`
-    ).join('');
-  });
-
   // ---------- Player DOM handles ----------
   const fills = [document.getElementById('fill'), ...document.querySelectorAll('[data-fill]')];
   const timeLabels = [document.getElementById('timeNow'), ...document.querySelectorAll('[data-timenow]')];
   const totalLabels = [...document.querySelectorAll('.t-total')];
-  const playIcons = [...document.querySelectorAll('[data-playicon]')];
+  const playIcons = [document.getElementById('playIcon'), ...document.querySelectorAll('[data-playicon]')];
   const npTitle = document.querySelector('.np-title');
   const npArtist = document.querySelector('.np-artist');
   const npArt = document.querySelector('.np-art .art');
-  const npNext = document.getElementById('npNext');
-  const npNextTitle = document.getElementById('npNextTitle');
-  const npNextArtist = document.getElementById('npNextArtist');
   const pbTitle = document.querySelector('.pb-title');
   const pbArtist = document.querySelector('.pb-artist');
   const pbArt = document.querySelector('.pb-art');
@@ -5949,13 +5753,7 @@
      of easing it, which is what a seek — or a re-timed line set landing mid-song
      — should do: easing there is the crawl that reads as a glitch. */
   function applyLyricFocus(t, snap) {
-    /* Clamped to the lines that are actually painted. The time array and the
-       line list can disagree: a re-timed set (see alignedLyricTimes) is not
-       guaranteed to be split into the same number of lines as the lyrics it was
-       measured against, and `lyricLines[active]` past the end is `undefined` —
-       reading `.offsetTop` off it threw once per frame for the rest of the song
-       and took the lyric loop down with it. */
-    const active = Math.min(activeIndexAt(t), lyricLines.length - 1);
+    const active = activeIndexAt(t);
     if (active === lyricActive && !snap) return false;
     const jumped = snap || Math.abs(active - lyricActive) > 6;
     lyricActive = active;
@@ -6173,14 +5971,6 @@
     heartBtn.setAttribute('aria-pressed', String(liked));
     pbHeart.setAttribute('aria-pressed', String(liked));
     renderLyrics(track);
-    /* Up next, written by the same pass as everything else on the sheet, so it
-       cannot describe a track other than the one playing. */
-    const nxt = nextUp();
-    npNext.hidden = !nxt;
-    if (nxt) {
-      npNextTitle.textContent = nxt.title;
-      npNextArtist.textContent = nxt.artist || '';
-    }
   }
 
   // The progress bar still wants the cheap 4–5Hz event; the lyric highlight no
@@ -6280,6 +6070,9 @@
     renderLibrary();
   });
 
+  document.getElementById('playBtn').addEventListener('click', () => playback.toggle());
+  document.querySelector('.player-bar .play-toggle').addEventListener('click', () => playback.toggle());
+
   // ---------- Press feedback ----------
   // One class flip per press: the glyph pops for play/pause and hops for a skip,
   // on every surface (big player, desktop bar, mini pill) with no state to sync.
@@ -6325,7 +6118,7 @@
       navigator.mediaSession.metadata = new MediaMetadata({
         title: track.title || 'Unknown',
         artist: track.artist || '',
-        album: track.album || 'Piratify',
+        album: track.album || 'Wavefy',
         artwork: src ? ['96x96', '128x128', '192x192', '256x256', '384x384', '512x512'].map(sizes => ({ src, sizes, type })) : [],
       });
       navigator.mediaSession.playbackState = playback.playing ? 'playing' : 'paused';
@@ -6381,29 +6174,24 @@
     x.classList.toggle('on', repeatState);
     x.setAttribute('aria-pressed', String(repeatState));
   });
-  /* One delegated handler per player, on the container. Ten listeners on ten
-     generated buttons would have to be re-bound whenever a surface redraws; a
-     container handler cannot be forgotten. The Previous/Next queries that used
-     to sit here are exactly why this is one function: they were written for the
-     sheet's buttons, the sheet never had any, and so on a phone the full player
-     could not change track at all. */
-  document.querySelectorAll('[data-transport]').forEach(box => {
-    box.addEventListener('click', e => {
-      const b = e.target.closest('[data-act]');
-      if (!b) return;
-      e.stopPropagation();
-      switch (b.dataset.act) {
-        case 'toggle':  playback.toggle(); break;
-        case 'prev':    playPrev(); break;
-        case 'next':    playNext(); break;
-        case 'shuffle': shuffleState = !shuffleState; setShuffle(shuffleState); syncShuffleUI(); break;
-        case 'repeat':  repeatState = !repeatState; setRepeat(repeatState); syncRepeatUI(); break;
-      }
-    });
-  });
+  shuffleBtns.forEach(b => b.addEventListener('click', () => {
+    shuffleState = !shuffleState;
+    setShuffle(shuffleState);
+    syncShuffleUI();
+  }));
+  repeatBtns.forEach(b => b.addEventListener('click', () => {
+    repeatState = !repeatState;
+    setRepeat(repeatState);
+    syncRepeatUI();
+  }));
   // Paint the state the buttons start in rather than leaving it to the first tap.
   syncShuffleUI();
   syncRepeatUI();
+
+  document.querySelectorAll('.pb-controls .ctrl[aria-label="Previous"]').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); playPrev(); }));
+  document.querySelectorAll('.pb-controls .ctrl[aria-label="Next"]').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); playNext(); }));
+  document.querySelectorAll('.np-controls .ctrl[aria-label="Previous"]').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); playPrev(); }));
+  document.querySelectorAll('.np-controls .ctrl[aria-label="Next"]').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); playNext(); }));
 
   // ---------- Search shortcut + kebab action sheet ----------
   const gotoSearch = (focus) => {
@@ -6448,9 +6236,7 @@
     else if (action === 'playlist') {
       if (!playback.current) { importStatus.textContent = 'Play or tap a song first, then file it into a playlist'; return; }
       openPlaylistSheet(playback.current);
-    } else if (action === 'equaliser') openEqSheet();
-    else if (action === 'offline') openOfflineSheet();
-    else if (action === 'dedup') {
+    } else if (action === 'dedup') {
       const result = deduplicateLibrary();
       const parts = [];
       if (result.removed) parts.push(`${result.removed} duplicate${result.removed === 1 ? '' : 's'}`);
@@ -6467,9 +6253,7 @@
     playback.seek(Math.min(Math.max((e.clientX - r.left) / r.width, 0), 1) * total);
   }
   document.getElementById('track').addEventListener('click', e => seek(e.currentTarget, e));
-  /* The bar seeks against its own rail, not the wrapper: the wrapper also holds
-     the clock now, and a click on the clock is not a request to seek. */
-  document.querySelector('.pb-progress .track').addEventListener('click', e => seek(e.currentTarget, e));
+  document.querySelector('.pb-progress').addEventListener('click', e => seek(e.currentTarget, e));
 
   function toggleLike() {
     const track = playback.current;
@@ -6479,7 +6263,7 @@
     pbHeart.classList.toggle('liked', track.loved);
     heartBtn.setAttribute('aria-pressed', String(Boolean(track.loved)));
     pbHeart.setAttribute('aria-pressed', String(Boolean(track.loved)));
-    import('./piratify-core.js').then(m => m.saveTrack(track));
+    import('./wavefy-core.js').then(m => m.saveTrack(track));
   }
   heartBtn.addEventListener('click', toggleLike);
   pbHeart.addEventListener('click', toggleLike);
@@ -6935,6 +6719,8 @@
   const homeSharedRows = document.getElementById('homeSharedRows');
   const sharedCount = document.getElementById('sharedCount');
   const homeEmpty = document.getElementById('homeEmpty');
+  const artistsHeading = document.getElementById('artistsHeading');
+  const artistsRow = document.getElementById('artistsRow');
 
   function rowHtml(track, fallbackSymbol, extra) {
     const playing = playback.current?.id === track.id ? ' playing' : '';
@@ -6988,6 +6774,22 @@
      render — or a previous session — is inlined on the first frame; the rest
      stream in and swap the placeholder out in place, so nothing re-renders
      underneath a tap. */
+  let artistRowNames = [];
+  const artistPhotoHtml = url => coverImgHtml(url, 'art-img');
+
+  function hydrateArtistPhotos() {
+    artistsRow.querySelectorAll('.artist[data-artist]').forEach(tile => {
+      const name = artistRowNames[Number(tile.dataset.artist)];
+      if (!name || cachedArtistImage(name)) return;
+      lookupArtistImage(name).then(url => {
+        if (!url) return;
+        const face = tile.querySelector('.face');
+        if (!face) return;
+        face.classList.add('photo');
+        face.innerHTML = artistPhotoHtml(url);
+      }).catch(() => { /* the SVG placeholder stays */ });
+    });
+  }
 
   /* ============ LIBRARY REDESIGN ============ */
   let libTab = 'all';
@@ -7032,18 +6834,6 @@
      animation scales the surface and a transformed rect would measure it short. */
   function openTrackMenu(menuBtn) {
     libContextMenuTrack = getTrack(menuBtn.dataset.ctxTrack);
-    /* One line that has to tell the truth about this track: a local import is
-       already here, a shared song can be kept or dropped, and one that has no
-       playable audio yet has nothing to save. */
-    const offlineItem = libContextMenu.querySelector('[data-ctx="offline"]');
-    if (offlineItem) {
-      const label = offlineItem.querySelector('[data-ctx-offline-label]');
-      const track = libContextMenuTrack;
-      const local = Boolean(track && !isPublicTrack(track) && track.blob);
-      const saved = Boolean(track && offlineSaved(track));
-      offlineItem.disabled = !track || local || (!saved && !trackUrl(track));
-      if (label) label.textContent = local ? 'Already on this device' : saved ? 'Remove download' : 'Keep on this device';
-    }
     libContextMenu.hidden = false;
     const w = libContextMenu.offsetWidth, h = libContextMenu.offsetHeight;
     const b = menuBtn.getBoundingClientRect();
@@ -7178,7 +6968,7 @@
   document.addEventListener('error', event => {
     const el = event.target;
     if (!el || el.tagName !== 'IMG') return;
-    if (!el.closest('.lib-sc-art, .lib-cs-art, .lib-ca-art, .lib-al-art, .lib-cir-photo, .lib-cpl-art, .lib-art-photo, .lib-pds-art, .pl-thumb, .hero-art, .np-art, .pb-art, .side-playlist')) return;
+    if (!el.closest('.lib-sc-art, .lib-cs-art, .lib-ca-art, .lib-al-art, .lib-cir-photo, .lib-cpl-art, .lib-art-photo, .lib-pds-art, .pl-cover, .pl-thumb, .hero-art, .np-art, .pb-art, .side-playlist')) return;
     el.classList.add('cover-failed');
     /* An address that was published by another device can be dead — the CDN
        retired it, or it was resolved from a bad match. Nothing else would ever
@@ -7219,7 +7009,7 @@
         ? `${esc(t.artist)} <span class="lib-nocover">· no cover found</span>`
         : esc(t.artist);
       return `<div class="lib-song-card${playing}" data-id="${t.id}">
-        <div class="lib-sc-art"${coverState ? ` data-cover="${coverState}"` : ''}>${libCoverHtml(t, 'i-note')}${offPin(t)}</div>
+        <div class="lib-sc-art"${coverState ? ` data-cover="${coverState}"` : ''}>${libCoverHtml(t, 'i-note')}</div>
         <div class="lib-sc-info"><div class="lib-sc-title">${esc(t.title)}</div><div class="lib-sc-artist">${artistLine}</div></div>
         ${uploadBtn}
         <button class="lib-sc-play" data-play-id="${t.id}" aria-label="Play"><svg width="16" height="16"><use href="#i-play"/></svg></button>
@@ -7603,385 +7393,6 @@
   });
   libPlRename?.addEventListener('blur', commitRename);
 
-  /* ============ Equaliser ============
-     Ten faders on a shared zero line. Every one of them is drawn here rather
-     than being an <input type="range">: no two engines rotate a native range
-     into a vertical control the same way, and none of them let the fill start
-     at the middle — which is the one thing a graphic EQ's shape depends on. */
-  const eqSheet = document.getElementById('eqSheet');
-  const eqBandsEl = document.getElementById('eqBands');
-  const eqPresetsEl = document.getElementById('eqPresets');
-  const eqPower = document.getElementById('eqPower');
-  const eqPowerLbl = document.getElementById('eqPowerLbl');
-  const eqSub = document.getElementById('eqSub');
-  const eqPreampEl = document.getElementById('eqPreamp');
-  const eqPreampVal = document.getElementById('eqPreampVal');
-  const eqNote = document.getElementById('eqNote');
-
-  const fmtDb = value => {
-    const n = Math.round(value * 10) / 10;
-    return `${n > 0 ? '+' : n < 0 ? '−' : ''}${Math.abs(n) % 1 === 0 ? Math.abs(n) : Math.abs(n).toFixed(1)}`;
-  };
-
-  /* One painter for both axes: the value is a position on a rail whose middle is
-     0 dB, and the fill runs from that middle to the knob. */
-  function paintFader(el, value) {
-    const fill = el.querySelector('.eq-fill');
-    const knob = el.querySelector('.eq-knob');
-    const pos = Math.max(0, Math.min(1, (value + EQ_RANGE) / (EQ_RANGE * 2))) * 100;
-    const from = Math.min(50, pos);
-    if (el.classList.contains('eq-fader-x')) {
-      fill.style.left = from + '%';
-      fill.style.width = Math.abs(50 - pos) + '%';
-      knob.style.left = pos + '%';
-    } else {
-      fill.style.top = from + '%';
-      fill.style.height = Math.abs(50 - pos) + '%';
-      knob.style.top = pos + '%';
-    }
-    el.setAttribute('aria-valuenow', String(value));
-  }
-
-  function commitFader(el, value, { persist = true } = {}) {
-    const clamped = Math.max(-EQ_RANGE, Math.min(EQ_RANGE, Math.round(value * 2) / 2));
-    const band = el.dataset.eqBand;
-    if (band !== undefined) {
-      eqSetBand(Number(band), clamped, persist);
-      const db = eqBandsEl.querySelector(`[data-eq-db="${band}"]`);
-      if (db) { db.textContent = fmtDb(clamped); db.classList.toggle('zero', clamped === 0); }
-    } else {
-      eqSetPreamp(clamped, persist);
-      eqPreampVal.textContent = `${fmtDb(clamped)} dB`;
-    }
-    paintFader(el, clamped);
-    paintEqStatus();
-  }
-
-  /* The header's own state: the sub-line names the shape that is playing, the
-     switch says whether it is being applied, and the note only exists when there
-     is something honest to say. */
-  function paintEqStatus() {
-    const st = eqState();
-    const maxBoost = Math.max(0, ...st.gains);
-    eqPower.setAttribute('aria-checked', String(st.enabled));
-    eqPowerLbl.textContent = st.enabled ? 'On' : 'Off';
-    eqSub.textContent = st.preset === 'custom'
-      ? 'Custom curve'
-      : st.preset.charAt(0).toUpperCase() + st.preset.slice(1);
-    eqSheet.classList.toggle('off', !st.enabled);
-    eqPresetsEl.querySelectorAll('[data-eq-preset]').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.eqPreset === st.preset);
-    });
-    if (!st.ready) eqNote.textContent = 'The equaliser joins the audio the first time you play something.';
-    else if (st.enabled && maxBoost > 0) eqNote.textContent = `Up to ${fmtDb(maxBoost)} dB of boost, so the level comes down by the same amount and nothing clips.`;
-    else eqNote.textContent = '';
-  }
-
-  function renderEq() {
-    const st = eqState();
-    if (!eqBandsEl.childElementCount) {
-      eqBandsEl.innerHTML = st.bands.map((hz, i) => `
-        <div class="eq-band">
-          <span class="eq-db zero" data-eq-db="${i}">0</span>
-          <div class="eq-fader" data-eq-band="${i}" role="slider" tabindex="0"
-               aria-label="${hz >= 1000 ? `${hz / 1000} kilohertz` : `${hz} hertz`}"
-               aria-valuemin="${-EQ_RANGE}" aria-valuemax="${EQ_RANGE}" aria-valuenow="0">
-            <span class="eq-rail"><span class="eq-fill"></span><span class="eq-knob"></span></span>
-          </div>
-          <span class="eq-hz">${hz >= 1000 ? `${hz / 1000}k` : hz}</span>
-        </div>`).join('');
-      eqPresetsEl.innerHTML = st.presets
-        .map(name => `<button class="eq-preset" data-eq-preset="${name}" role="tab">${name}</button>`)
-        .join('');
-    }
-    st.bands.forEach((_, i) => {
-      const el = eqBandsEl.querySelector(`[data-eq-band="${i}"]`);
-      const db = eqBandsEl.querySelector(`[data-eq-db="${i}"]`);
-      if (el) paintFader(el, st.gains[i]);
-      if (db) { db.textContent = fmtDb(st.gains[i]); db.classList.toggle('zero', st.gains[i] === 0); }
-    });
-    paintFader(eqPreampEl, st.preamp);
-    eqPreampVal.textContent = `${fmtDb(st.preamp)} dB`;
-    paintEqStatus();
-  }
-
-  function openEqSheet() { renderEq(); eqSheet.hidden = false; }
-  function closeEqSheet() { eqSheet.hidden = true; }
-
-  /* Dragging a fader is one gesture from press to release, and the value changes
-     under the finger: the audio is re-tuned on every move, but the settings are
-     only written to localStorage once, at the end — a synchronous write per
-     pointermove is the one part of this that would be felt. */
-  let eqDrag = null;
-  function eqValueAt(el, event) {
-    const rail = el.querySelector('.eq-rail');
-    if (!rail) return 0;
-    const r = rail.getBoundingClientRect();
-    const t = el.classList.contains('eq-fader-x')
-      ? (event.clientX - r.left) / Math.max(1, r.width)
-      : (r.bottom - event.clientY) / Math.max(1, r.height);
-    return (Math.max(0, Math.min(1, t)) * 2 - 1) * EQ_RANGE;
-  }
-  eqSheet.addEventListener('pointerdown', event => {
-    const el = event.target.closest('.eq-fader');
-    if (!el) return;
-    event.preventDefault();
-    eqDrag = { el, id: event.pointerId };
-    eqSheet.classList.add('dragging');
-    try { el.setPointerCapture(event.pointerId); } catch { /* older engines */ }
-    commitFader(el, eqValueAt(el, event), { persist: false });
-  });
-  eqSheet.addEventListener('pointermove', event => {
-    if (!eqDrag || event.pointerId !== eqDrag.id) return;
-    commitFader(eqDrag.el, eqValueAt(eqDrag.el, event), { persist: false });
-  });
-  const endEqDrag = event => {
-    if (!eqDrag || (event && event.pointerId !== eqDrag.id)) return;
-    const el = eqDrag.el;
-    eqDrag = null;
-    eqSheet.classList.remove('dragging');
-    commitFader(el, Number(el.getAttribute('aria-valuenow')) || 0);
-  };
-  eqSheet.addEventListener('pointerup', endEqDrag);
-  eqSheet.addEventListener('pointercancel', endEqDrag);
-  /* A double tap on a band puts that band back to zero — the same gesture a
-     hardware console uses, and the fastest way out of a curve you no longer
-     recognise. */
-  eqSheet.addEventListener('dblclick', event => {
-    const el = event.target.closest('[data-eq-band]');
-    if (el) commitFader(el, 0);
-  });
-  eqSheet.addEventListener('keydown', event => {
-    const el = event.target.closest?.('.eq-fader');
-    if (!el) return;
-    const now = Number(el.getAttribute('aria-valuenow')) || 0;
-    const step = event.shiftKey ? 2 : 0.5;
-    const up = el.classList.contains('eq-fader-x') ? 'ArrowRight' : 'ArrowUp';
-    const down = el.classList.contains('eq-fader-x') ? 'ArrowLeft' : 'ArrowDown';
-    if (event.key === up) commitFader(el, now + step);
-    else if (event.key === down) commitFader(el, now - step);
-    else if (event.key === 'PageUp') commitFader(el, now + 4);
-    else if (event.key === 'PageDown') commitFader(el, now - 4);
-    else if (event.key === 'Home') commitFader(el, -EQ_RANGE);
-    else if (event.key === 'End') commitFader(el, EQ_RANGE);
-    else return;
-    event.preventDefault();
-  });
-  eqSheet.addEventListener('click', event => {
-    if (event.target.closest('#eqClose')) { closeEqSheet(); return; }
-    if (event.target.closest('#eqPower')) {
-      const st = eqState();
-      eqSetEnabled(!st.enabled);
-      paintEqStatus();
-      return;
-    }
-    const preset = event.target.closest('[data-eq-preset]');
-    if (!preset) return;
-    /* Picking a preset is an intent to use the equaliser, so it turns it on
-       rather than storing a curve that does nothing. */
-    eqSetEnabled(true);
-    eqSetPreset(preset.dataset.eqPreset);
-    renderEq();
-  });
-
-  /* ============ Offline music ============
-     The ledger for what this device owns: how much is saved, how much room is
-     left, and the two things worth doing about it. Saving is sequential on
-     purpose — a phone on a train should not open ten parallel downloads to
-     fetch a hundred megabytes. */
-  const offlineSheetEl = document.getElementById('offlineSheet');
-  const offlineSub = document.getElementById('offlineSub');
-  const offlineListEl = document.getElementById('offlineList');
-  const offlineProgress = document.getElementById('offlineProgress');
-  const offlineProgressFill = document.getElementById('offlineProgressFill');
-  const offlineSaveAll = document.getElementById('offlineSaveAll');
-  const offlineClear = document.getElementById('offlineClear');
-  let offlineBusy = false;
-
-  const fmtBytes = bytes => {
-    const n = Number(bytes) || 0;
-    if (n >= 1073741824) return `${(n / 1073741824).toFixed(1)} GB`;
-    if (n >= 1048576) return `${Math.round(n / 1048576)} MB`;
-    return `${Math.max(1, Math.round(n / 1024))} KB`;
-  };
-
-  /* Everything shared that is not on the disk yet. A local import is already
-     offline by construction, so it is never a candidate and never counted. */
-  const offlinePending = () => allTracks().filter(t => isPublicTrack(t) && !offlineSaved(t));
-
-  /* The row badge: a small pin on the cover's corner. One mark for both answers
-     to "does this play with the aeroplane mode on?" — a saved shared song and a
-     local import are the same thing to a listener. */
-  const offPin = track => (onDevice(track)
-    ? '<span class="lib-off-pin" title="On this device"><svg><use href="#i-download"/></svg></span>'
-    : '');
-
-  function renderOffline() {
-    const rows = offlineRows();
-    const pending = offlinePending().length;
-    offlineSub.textContent = rows.length
-      ? `${rows.length} song${rows.length === 1 ? '' : 's'} · ${fmtBytes(offlineTotalBytes())} on this device`
-      : 'Nothing saved yet.';
-    offlineListEl.innerHTML = rows.length
-      ? rows.map(row => {
-          const track = getTrack(row.id);
-          const meta = row.track || {};
-          const sub = [track?.artist || meta.artist, fmtBytes(row.size)].filter(Boolean).join(' · ');
-          return `<div class="off-row">
-            <div class="off-row-art">${track ? libCoverHtml(track, 'i-note') : '<svg width="100%" height="100%"><use href="#i-note"/></svg>'}</div>
-            <div class="off-row-txt">
-              <div class="off-row-title">${esc(track?.title || meta.title || 'Untitled track')}</div>
-              <div class="off-row-sub">${esc(sub)}</div>
-            </div>
-            <button class="off-row-x" data-off-remove="${row.id}" aria-label="Remove from this device"><svg width="14" height="14"><use href="#i-close"/></svg></button>
-          </div>`;
-        }).join('')
-      : '<p class="off-empty">Songs saved here are kept on this device and play with no connection — on a plane, underground, or when the shared library cannot be reached.</p>';
-    offlineSaveAll.disabled = offlineBusy || !pending;
-    offlineSaveAll.textContent = offlineBusy ? 'Saving…' : (pending ? `Save everything (${pending})` : 'Everything is saved');
-    offlineClear.disabled = offlineBusy || !rows.length;
-  }
-
-  async function saveForOffline(track) {
-    offlineProgress.hidden = false;
-    offlineProgressFill.style.width = '2%';
-    importStatus.textContent = `Saving ${track.title}…`;
-    try {
-      const result = await saveOffline(track, {
-        onProgress: (fraction, got, total) => {
-          offlineProgressFill.style.width = `${Math.max(2, Math.round(fraction * 100))}%`;
-          importStatus.textContent = total
-            ? `Saving ${track.title} — ${fmtBytes(got)} of ${fmtBytes(total)}`
-            : `Saving ${track.title} — ${fmtBytes(got)}`;
-        },
-      });
-      offlineProgressFill.style.width = '100%';
-      importStatus.textContent = result?.local
-        ? `${track.title} is already on this device`
-        : `${track.title} is ready offline`;
-      return true;
-    } catch (err) {
-      importStatus.textContent = err?.message || 'That song could not be saved';
-      return false;
-    } finally {
-      /* Long enough to be seen finishing, short enough not to sit there. */
-      setTimeout(() => { if (!offlineBusy) { offlineProgress.hidden = true; offlineProgressFill.style.width = '0%'; } }, 900);
-    }
-  }
-
-  async function saveAllOffline() {
-    const queue = offlinePending();
-    if (!queue.length || offlineBusy) return;
-    offlineBusy = true;
-    renderOffline();
-    let saved = 0;
-    for (const track of queue) {
-      if (await saveForOffline(track)) saved += 1;
-      renderOffline();
-    }
-    offlineBusy = false;
-    importStatus.textContent = saved
-      ? `${saved} song${saved === 1 ? '' : 's'} ready for offline · ${fmtBytes(offlineTotalBytes())} on this device`
-      : 'Nothing new could be saved';
-    offlineProgress.hidden = true;
-    offlineProgressFill.style.width = '0%';
-    renderOffline();
-    renderLibrary();
-  }
-
-  async function toggleOfflineFor(track) {
-    if (!track) return;
-    if (offlineSaved(track)) {
-      await removeOffline(track.id);
-      importStatus.textContent = `${track.title} no longer uses this device's storage`;
-      renderOffline();
-      renderLibrary();
-      return;
-    }
-    if (await saveForOffline(track)) renderLibrary();
-    renderOffline();
-  }
-
-  function openOfflineSheet() {
-    renderOffline();
-    offlineSheetEl.hidden = false;
-    /* Room left, when the browser will say. It is shown beside the total rather
-       than as a warning: this library is a few hundred megabytes at most, and a
-       number is enough to decide whether to save the rest. */
-    offlineQuota().then(est => {
-      if (!est || offlineSheetEl.hidden || !est.quota) return;
-      const free = Math.max(0, est.quota - est.usage);
-      offlineSub.textContent += ` · about ${fmtBytes(free)} free`;
-    }).catch(() => {});
-  }
-
-  offlineClear.addEventListener('click', async () => {
-    if (offlineBusy || !offlineRows().length) return;
-    /* Two taps, and the label says what is about to happen: this is the one
-       button in the app that throws work away. */
-    if (offlineClear.dataset.armed !== '1') {
-      offlineClear.dataset.armed = '1';
-      offlineClear.textContent = 'Tap again to remove all';
-      setTimeout(() => { offlineClear.dataset.armed = '0'; renderOffline(); }, 4000);
-      return;
-    }
-    offlineClear.dataset.armed = '0';
-    const removed = await clearOffline();
-    importStatus.textContent = `Removed ${removed} saved song${removed === 1 ? '' : 's'}`;
-    renderOffline();
-    renderLibrary();
-  });
-  offlineSaveAll.addEventListener('click', () => { saveAllOffline(); });
-  offlineListEl.addEventListener('click', async event => {
-    const btn = event.target.closest('[data-off-remove]');
-    if (!btn) return;
-    const id = btn.dataset.offRemove;
-    const track = getTrack(id);
-    await removeOffline(id);
-    importStatus.textContent = track ? `${track.title} removed from this device` : 'Removed from this device';
-    renderOffline();
-    renderLibrary();
-  });
-  document.getElementById('offlineClose').addEventListener('click', () => { offlineSheetEl.hidden = true; });
-
-  /* Escape closes whichever of the two sheets is open, and only ever one. */
-  document.addEventListener('keydown', event => {
-    if (event.key !== 'Escape') return;
-    if (!eqSheet.hidden) closeEqSheet();
-    if (!offlineSheetEl.hidden) offlineSheetEl.hidden = true;
-  });
-
-  /* ---- The mini player's four bars ----
-     They were a keyframe loop that knew nothing about the music. The equaliser
-     already has an analyser on the master bus, so they can be what they look
-     like instead — while playing, at the screen's refresh rate, writing one
-     compositor-only transform per bar. Nothing runs when the audio is stopped. */
-  const meterBars = [...document.querySelectorAll('.mp-eq i')];
-  let meterRaf = 0;
-  function meterTick() {
-    meterRaf = requestAnimationFrame(meterTick);
-    const levels = eqSpectrum(meterBars.length);
-    if (!levels) return;
-    meterBars.forEach((bar, i) => {
-      bar.style.transform = `scaleY(${(0.16 + (levels[i] || 0) * 0.84).toFixed(3)})`;
-    });
-  }
-  function startMeter() {
-    if (meterRaf || !meterBars.length) return;
-    /* Reduced motion means reduced motion: the bars hold their resting height and
-       the keyframe loop that used to drive them is already off. */
-    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
-    document.body.classList.add('eq-live');
-    meterTick();
-  }
-  function stopMeter() {
-    if (meterRaf) cancelAnimationFrame(meterRaf);
-    meterRaf = 0;
-    document.body.classList.remove('eq-live');
-    meterBars.forEach(bar => { bar.style.transform = ''; });
-  }
-  onPlayback('state', ({ playing } = {}) => { if (playing) startMeter(); else stopMeter(); });
-
   // ---- OLD renderLibrary preserved for Home view + triggers new Library ----
   /* The home header answers four questions without a single tap: what time-of-day
      greeting, how much is here, and where to go next. The counts are drawn from
@@ -8006,13 +7417,9 @@
     try { playlists = getPlaylists() || []; } catch { playlists = []; }
 
     const local = st.tracks.length;
-    /* Counts only. This line used to end "· covers and lyrics load on their
-       own", which is a promise the app keeps everywhere and does not need to
-       narrate; on a phone the clause was what pushed the line onto a second
-       one. */
     homeSub.textContent = everything.length
-      ? `${everything.length} track${everything.length === 1 ? '' : 's'}${local ? ` · ${local} on this device` : ''}`
-      : 'Import music from the Library tab.';
+      ? `${everything.length} track${everything.length === 1 ? '' : 's'}${local ? ` · ${local} on this device` : ''} · covers and lyrics load on their own`
+      : 'Import music from the Library tab, or open the app while songs are shared.';
 
     const chips = [
       ['songs', everything.length, 'songs'],
@@ -8068,14 +7475,17 @@
     homeSharedRows.innerHTML = shared.slice(0, 10).map(t => rowHtml(t, 'i-wave')).join('');
     const seen = new Map();
     everything.forEach(t => { const a = t.artist; if (a && a !== 'Unknown artist' && !seen.has(a)) seen.set(a, t); });
-    /* Portraits are looked up by name through the core and cached, and the
-       Library's artist grid reads that cache on its next paint. This used to
-       render a hidden duplicate artist row purely to hang the lookups off. */
-    seen.forEach((t, name) => {
-      if (!cachedArtistImage(name)) lookupArtistImage(name).catch(() => {});
-    });
+    const knownArtists = [...seen.entries()];
+    artistRowNames = knownArtists.map(([name]) => name);
+    if (typeof artistsHeading !== 'undefined' && artistsHeading) artistsHeading.hidden = seen.size === 0;
+    artistsRow.innerHTML = knownArtists.map(([name, t], index) => {
+      const photo = cachedArtistImage(name);
+      return `<div class="artist" data-id="${t.id}" data-artist="${index}"><div class="face${photo ? ' photo' : ''}">${photo ? artistPhotoHtml(photo) : coverHtml(t, 'i-person')}</div><div class="name">${name}</div></div>`;
+    }).join('');
+    hydrateArtistPhotos();
     renderSearch(searchQuery);
     renderPlaylists();
+    renderPlaylistsGrid();
     if (!document.querySelector('.view.active')?.id) showView('view-home');
     queueArtworkLookups(everything);
     // Also render the new Library view
@@ -8149,6 +7559,8 @@
   });
 
   // ---------- Playlists: create, fill, play, delete ----------
+  const playlistsGrid = document.getElementById('playlistsGrid');
+  const playlistsHeading = document.getElementById('playlistsHeading');
   const plSheet = document.getElementById('plSheet');
   const plList = document.getElementById('plList');
   const plNameInput = document.getElementById('plNameInput');
@@ -8156,6 +7568,30 @@
   let plTarget = null;                 // the track being filed away, if any
 
   const countLabel = n => `${n} song${n === 1 ? '' : 's'}`;
+  const playlistCover = tracks => tracks[0]
+    ? coverHtml(tracks[0], 'i-vinyl')
+    : '<svg><use href="#i-note"/></svg>';
+
+  function renderPlaylistsGrid() {
+    const lists = getPlaylists();
+    // Only worth a heading once there is something to show.
+    if (typeof playlistsHeading !== 'undefined' && playlistsHeading) playlistsHeading.hidden = lists.length === 0;
+    playlistsGrid.innerHTML = lists.map(pl => {
+      const tracks = playlistTracks(pl.id);
+      return `
+      <div class="pl-card" data-pl-id="${pl.id}" data-lg-glass>
+        <div class="pl-cover">${playlistCover(tracks)}</div>
+        <div class="pl-name">${esc(pl.name)}</div>
+        <div class="pl-sub">${countLabel(tracks.length)}</div>
+        <button class="pl-del" data-pl-del="${pl.id}" aria-label="Delete playlist"><svg width="14" height="14"><use href="#i-close"/></svg></button>
+      </div>`;
+    }).join('') + `
+      <div class="pl-card pl-new-card" data-pl-new="1">
+        <div class="pl-plus"><svg width="20" height="20"><use href="#i-plus"/></svg></div>
+        <div class="pl-name">New playlist</div>
+      </div>`;
+    refreshLiquidGlass();
+  }
 
   function renderPlaylistChoices() {
     const lists = getPlaylists();
@@ -8165,7 +7601,7 @@
           <span class="pl-choice-name">${esc(pl.name)}</span>
           <span class="pl-choice-count">${playlistTracks(pl.id).length}</span>
         </button>`).join('')
-      : `<div class="pl-empty">No playlists yet — name one below.</div>`;
+      : `<div class="pl-empty">No playlists yet. Name one below — it is created with this song already in it.</div>`;
   }
 
   function openPlaylistSheet(track) {
@@ -8186,12 +7622,8 @@
       ? `Created “${pl.name}” with ${plTarget.title}`
       : `Created “${pl.name}”`;
     closePlaylistSheet();
+    renderPlaylistsGrid();
     renderPlaylists();
-    /* Both surfaces that list playlists: the sidebar, and the Library's
-       Playlists tab. Only the sidebar used to refresh, so a playlist you had
-       just made was missing from the Library until something else re-rendered
-       it. */
-    renderLibPlaylistGrid();
   }
 
   plSheet.addEventListener('click', e => {
@@ -8201,8 +7633,8 @@
       const total = addToPlaylist(add.dataset.plAdd, plTarget.id);
       importStatus.textContent = `${plTarget.title} added — ${countLabel(total)} in that playlist`;
       closePlaylistSheet();
+      renderPlaylistsGrid();
       renderPlaylists();
-      renderLibPlaylistGrid();
       return;
     }
     if (e.target.closest('#plCreate')) createPlaylistFromInput();
@@ -8210,6 +7642,31 @@
   });
   plNameInput.addEventListener('keydown', e => {
     if (e.key === 'Enter') { e.preventDefault(); createPlaylistFromInput(); }
+  });
+
+  playlistsGrid.addEventListener('click', e => {
+    const del = e.target.closest('[data-pl-del]');
+    if (del) {
+      e.stopPropagation();
+      const pl = getPlaylist(del.dataset.plDel);
+      if (!pl) return;
+      if (!confirm(`Delete “${pl.name}”?`)) return;
+      deletePlaylist(pl.id);
+      renderPlaylistsGrid();
+      renderPlaylists();
+      return;
+    }
+    if (e.target.closest('[data-pl-new]')) { openPlaylistSheet(null); return; }
+    const card = e.target.closest('[data-pl-id]');
+    if (!card) return;
+    const tracks = playlistTracks(card.dataset.plId);
+    if (!tracks.length) {
+      importStatus.textContent = 'That playlist is empty — add songs with the + on any row';
+      return;
+    }    setQueue(tracks, 0);
+    playAt(0);
+    renderLibrary();
+    openPlayer();
   });
 
   // ---- Library Redesign Interactions ----
@@ -8310,8 +7767,6 @@
       importStatus.textContent = result.removed ? `Removed ${parts.join(', ')} — ${result.kept} songs remaining` : 'No duplicates found';
       renderLibrary();
     }
-    else if (item.id === 'eqBtn') openEqSheet();
-    else if (item.id === 'offlineBtn') openOfflineSheet();
     else if (item.id === 'coverHealthBtn') reportCoverHealth();
     else if (item.id === 'publishCoversBtn') publishCovers();
   });
@@ -8464,7 +7919,6 @@
     if (action === 'play-next') { const q = getQueue(); const idx = getQueueIndex(); q.splice(idx + 1, 0, libContextMenuTrack); } // simplified
     else if (action === 'add-queue') { const q = getQueue(); q.push(libContextMenuTrack); }
     else if (action === 'add-playlist') { openPlaylistSheet(libContextMenuTrack); }
-    else if (action === 'offline') { toggleOfflineFor(libContextMenuTrack); }
     else if (action === 'info') { importStatus.textContent = `${libContextMenuTrack.title} — ${libContextMenuTrack.artist}${libContextMenuTrack.album ? ' (' + libContextMenuTrack.album + ')' : ''}`; }
     libContextMenuTrack = null;
   });
@@ -8597,14 +8051,17 @@
     }
   });
 
-  /* Declared before the first wiring pass below: a top-level statement that
-     referenced these in their temporal dead zone used to throw and abort the
-     whole module, so the boot block never ran and the app never loaded. */
+  /* Declared before the first wiring pass below. These were declared further
+     down, and this top-level statement referenced `searchRows` in its temporal
+     dead zone — one TDZ throw aborts the whole module, so the boot block at the
+     end of this script never ran and the app never loaded. Declarations live
+     above every use now. */
   const searchInput = document.getElementById('searchInput');
+  const searchRows = document.getElementById('searchRows');
   let searchQuery = '';
 
   // The + on any song row files that song into a playlist.
-  [homeSharedRows].forEach(root => root.addEventListener('click', e => {
+  [homeSharedRows, searchRows].forEach(root => root.addEventListener('click', e => {
     const btn = e.target.closest('[data-pl-add-track]');
     if (!btn) return;
     e.stopPropagation();
@@ -8729,7 +8186,7 @@
     const artist = needle ? sHighlight(t.artist, needle) : esc(t.artist);
     const artistLine = coverState === 'no-match' ? `${artist} <span class="lib-nocover">· no cover found</span>` : artist;
     return `<div class="lib-song-card${playing}" data-id="${t.id}">
-      <div class="lib-sc-art"${coverState ? ` data-cover="${coverState}"` : ''}>${libCoverHtml(t, 'i-note')}${offPin(t)}</div>
+      <div class="lib-sc-art"${coverState ? ` data-cover="${coverState}"` : ''}>${libCoverHtml(t, 'i-note')}</div>
       <div class="lib-sc-info"><div class="lib-sc-title">${needle ? sHighlight(t.title, needle) : esc(t.title)}</div><div class="lib-sc-artist">${artistLine}</div></div>
       ${uploadBtn}
       <button class="lib-sc-play" data-play-id="${t.id}" aria-label="Play"><svg width="16" height="16"><use href="#i-play"/></svg></button>
@@ -8991,7 +8448,7 @@
     openPlayer();
   }
 
-  [homeSharedRows, releasesGrid, recentRow, heroCard].forEach(root =>
+  [homeSharedRows, searchRows, releasesGrid, recentRow, artistsRow, heroCard].forEach(root =>
     root.addEventListener('click', e => {
       /* A row's own controls (.row-cloud: add to playlist, upload, identify) do
          their own job only. Their handlers run on this same element, so their
@@ -9044,7 +8501,7 @@
     renderLibrary();
   }
 
-  [homeSharedRows].forEach(root => root.addEventListener('click', e => {
+  [homeSharedRows, searchRows].forEach(root => root.addEventListener('click', e => {
     const btn = e.target.closest('[data-cloud]');
     if (!btn) return;
     e.stopPropagation();
@@ -9052,7 +8509,7 @@
   }));
 
   // Let the AI listen to a specific local song and correct its tags.
-  [homeSharedRows].forEach(root => root.addEventListener('click', async e => {
+  [homeSharedRows, searchRows].forEach(root => root.addEventListener('click', async e => {
     const btn = e.target.closest('[data-fix]');
     if (!btn) return;
     e.stopPropagation();
@@ -9079,7 +8536,7 @@
   document.getElementById('cloudAllBtn').addEventListener('click', uploadAllLocal);
 
   // Long-press (or right-click) a row to share it to the shared library.
-  [homeSharedRows].forEach(root => root.addEventListener('contextmenu', async e => {
+  [homeSharedRows, searchRows].forEach(root => root.addEventListener('contextmenu', async e => {
     const row = e.target.closest('.row[data-id]');
     if (!row) return;
     e.preventDefault();
@@ -9819,7 +9276,7 @@
 
   // ---------- iOS Safari: say the one thing that actually removes the bar ----
   // In a Safari tab, Safari's own bottom bar sits over the app and no page code
-  // can paint it away or shrink it. An installed Piratify has no browser chrome at
+  // can paint it away or shrink it. An installed Wavefy has no browser chrome at
   // all, so the tip is offered once, only where it applies, and dismisses for good.
   (() => {
     const ua = navigator.userAgent || '';
@@ -9889,6 +9346,47 @@
     }, { passive: true, capture: true });
   })();
 
+  /* ---------- Glass scroll rail ----------
+     Rides the content column's own scroll events (passive) and coalesces behind
+     a rAF guard — the same shape as the fan rails — so it writes at most once
+     per frame rather than once per event. Only the transform is per-frame, and
+     that is composited; the thumb's WIDTH never changes and its height is
+     written only when it actually changes, so a scroll cannot lay the rail out.
+     Built here rather than in markup so the whole feature is one place. */
+  (() => {
+    const app = document.getElementById('app');
+    const scroller = document.getElementById('main');
+    if (!app || !scroller) return;
+    const rail = document.createElement('div');
+    rail.className = 'glass-rail';
+    rail.setAttribute('aria-hidden', 'true');
+    rail.innerHTML = '<i></i>';
+    app.appendChild(rail);
+    const thumb = rail.firstElementChild;
+
+    let frame = 0, fadeTimer = 0, lastH = -1;
+    const paint = () => {
+      frame = 0;
+      const trackH = rail.clientHeight || 1;
+      const contentH = scroller.scrollHeight, viewH = scroller.clientHeight;
+      const ratio = Math.min(1, viewH / Math.max(1, contentH));
+      const h = Math.max(34, Math.round(trackH * ratio));
+      if (h !== lastH) { thumb.style.height = h + 'px'; lastH = h; }
+      const denom = Math.max(1, contentH - viewH);
+      const y = Math.round((scroller.scrollTop / denom) * Math.max(0, trackH - h));
+      thumb.style.transform = 'translateY(' + y + 'px)';
+    };
+    const kick = () => {
+      if (!frame) frame = requestAnimationFrame(paint);
+      rail.classList.add('on');
+      clearTimeout(fadeTimer);
+      fadeTimer = setTimeout(() => { rail.classList.remove('on'); paint(); }, 750);
+    };
+    scroller.addEventListener('scroll', kick, { passive: true });
+    window.addEventListener('resize', () => { lastH = -1; if (!frame) frame = requestAnimationFrame(paint); }, { passive: true });
+    requestAnimationFrame(paint);
+  })();
+
   /* ---------- The dock, measured rather than assumed ----------
      Every view reserved a flat `--dock-h` of 128px plus 30px of air — the height
      of the nav AND the mini player together. With the mini player dismissed (no
@@ -9905,29 +9403,14 @@
     const chrome = document.getElementById('bottomChrome');
     if (!chrome) return;
     const wide = window.matchMedia('(min-width: 900px)');
-    const bar = document.getElementById('playerBar');
     const apply = () => {
-      /* Above 900px the mobile stack is hidden and the desktop bar owns the
-         bottom edge, so the bar's height is what has to be reserved. This used
-         to clear the property outright — "the wide layout docks the player in
-         the flow" — which was never true: the bar is `position: fixed`, so
-         nothing was docked and no view reserved anything for it. Measured: the
-         last row of every desktop list ended up under the bar. It is as
-         observable as the dock is, so it is observed the same way. */
-      if (wide.matches) {
-        const h = bar ? Math.round(bar.getBoundingClientRect().height) : 0;
-        if (h > 0) root.style.setProperty('--dock-h', h + 'px');
-        return;
-      }
+      if (wide.matches) { root.style.removeProperty('--dock-h'); return; }
       const h = Math.round(chrome.getBoundingClientRect().height);
       if (h > 0) root.style.setProperty('--dock-h', h + 'px');
     };
     /* A transform does not change a border box, so the pill's entrance cannot
        retrigger this — only the pill actually appearing or going away can. */
-    if (window.ResizeObserver) {
-      new ResizeObserver(apply).observe(chrome);
-      if (bar) new ResizeObserver(apply).observe(bar);
-    }
+    if (window.ResizeObserver) new ResizeObserver(apply).observe(chrome);
     window.addEventListener('resize', apply, { passive: true });
     if (wide.addEventListener) wide.addEventListener('change', apply);
     apply();
